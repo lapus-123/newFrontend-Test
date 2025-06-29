@@ -201,9 +201,8 @@ export default function DriverHistory() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.productType}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.dnNumber || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={`inline-block px-3 py-1 rounded-full text-white text-xs ${
-                            getStatus(d.arrivalTime) === 'Full Time' ? 'bg-green-500' : 'bg-yellow-500'
-                          }`}>
+                          <span className={`inline-block px-3 py-1 rounded-full text-white text-xs ${getStatus(d.arrivalTime) === 'Full Time' ? 'bg-green-500' : 'bg-yellow-500'
+                            }`}>
                             {getStatus(d.arrivalTime)}
                           </span>
                         </td>
@@ -220,11 +219,10 @@ export default function DriverHistory() {
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  page === 1
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === 1
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
               >
                 <ChevronLeft className="w-5 h-5" />
                 Prev
@@ -236,11 +234,10 @@ export default function DriverHistory() {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                  page === totalPages
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === totalPages
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  }`}
               >
                 Next
                 <ChevronRight className="w-5 h-5" />

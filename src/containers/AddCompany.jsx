@@ -6,7 +6,7 @@ import {
   Trash2,
   Search
 } from 'lucide-react';
-import axios from 'axios';
+import axios from '../utils/axios'; // Adjust the import path as needed
 
 export default function Company() {
   const [formData, setFormData] = useState({ name: '' });
@@ -16,7 +16,7 @@ export default function Company() {
   const [editId, setEditId] = useState(null);
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
-  const API_URL = 'http://localhost:5000/api/companies';
+  const API_URL = '/api/companies';
 
   // Toast helper
   const showToast = (message, type = 'success') => {
@@ -34,7 +34,7 @@ export default function Company() {
       const res = await axios.get(API_URL);
       setCompanies(res.data);
     } catch (err) {
-      showToast('Failed to fetch companies', 'error');
+      err.showToast('Failed to fetch companies', 'error');
     }
   };
 
@@ -61,7 +61,7 @@ export default function Company() {
       resetForm();
       setIsModalOpen(false);
     } catch (err) {
-      showToast('Failed to add company', 'error');
+      err.showToast('Failed to add company', 'error');
     }
   };
 
@@ -85,7 +85,7 @@ export default function Company() {
       resetForm();
       setIsModalOpen(false);
     } catch (err) {
-      showToast('Failed to update company', 'error');
+      err.howToast('Failed to update company', 'error');
     }
   };
 
@@ -96,7 +96,7 @@ export default function Company() {
       setCompanies((prev) => prev.filter((c) => c._id !== id));
       showToast('Company deleted.', 'warning');
     } catch (err) {
-      showToast('Failed to delete company', 'error');
+      err.showToast('Failed to delete company', 'error');
     }
   };
 
@@ -113,11 +113,10 @@ export default function Company() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
       {/* Toast */}
       {toast.show && (
-        <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 ${
-          toast.type === 'success' ? 'bg-green-500' :
+        <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 ${toast.type === 'success' ? 'bg-green-500' :
           toast.type === 'error' ? 'bg-red-500' :
-          toast.type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
-        } text-white`}>
+            toast.type === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+          } text-white`}>
           {toast.message}
         </div>
       )}

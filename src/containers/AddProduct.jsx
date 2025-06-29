@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../utils/axios'; // Adjust the import path as needed
 import {
   Package,
   Plus,
@@ -17,7 +17,7 @@ export default function Product() {
   const [searchTerm, setSearchTerm] = useState('');
   const [editId, setEditId] = useState(null);
 
-  const API_URL = 'http://localhost:5000/api/products';
+  const API_URL = '/api/products';
 
   useEffect(() => {
     fetchProducts();

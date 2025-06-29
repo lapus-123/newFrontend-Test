@@ -1,392 +1,324 @@
-import { useEffect, useState } from 'react';
-import {
-  User, Truck, Package, MapPin, Calendar, Search, Download, Edit2, Trash2
-} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import axios from '../utils/axios';
+import { Plus, X, User, Edit3, Trash2, Users, Search, Sparkles } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
-import axios from '../utils/axios';
 
-export default function AddDriver() {
-  const [formData, setFormData] = useState({});
-  const [errors, setErrors] = useState({});
+export default function Driver() {
   const [drivers, setDrivers] = useState([]);
-  const [truckTypes, setTruckTypes] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [companies, setCompanies] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [name, setName] = useState('');
+  const [editId, setEditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [ageMin, setAgeMin] = useState('');
-  const [ageMax, setAgeMax] = useState('');
-  const [filterTruckType, setFilterTruckType] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1);
-  const [sortField, setSortField] = useState('name');
-  const [sortOrder, setSortOrder] = useState('asc');
-  const PAGE_SIZE = 5;
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch all data on load
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [dRes, tRes, pRes, cRes] = await Promise.all([
-          axios.get('/api/drivers'),
-          axios.get('/api/trucks'),
-          axios.get('/api/products'),
-          axios.get('/api/companies/dropdown')
-        ]);
-        setDrivers(dRes.data);
-        setTruckTypes(tRes.data);
-        setProducts(pRes.data);
-        setCompanies(cRes.data);
-      } catch (err) {
-        toast.error('Failed to fetch data');
-      }
-    }
-
-    fetchData();
+    fetchDrivers();
   }, []);
 
-  // Validate form
-  const validate = () => {
-    const e = {};
-    const requiredFields = ['name', 'plateNumber', 'age', 'address', 'truckTypeId', 'companyId'];
-    requiredFields.forEach(field => {
-      if (!formData[field]?.toString().trim()) {
-        e[field] = `${field.replace(/([A-Z])/g, ' $1')} is required`;
-      }
-    });
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
-
-  const openNew = () => {
-    setFormData({});
-    setEditingId(null);
-    setErrors({});
-    setIsModalOpen(true);
-  };
-
-  const openEdit = (d) => {
-    const truckType = truckTypes.find(t => t._id === d.truckTypeId?._id)?.type || '';
-    const productType = products.find(p => p._id === d.productId?._id)?.name || '';
-    const company = companies.find(c => c._id === d.companyId?._id)?.name || '';
-
-    setFormData({
-      name: d.name,
-      plateNumber: d.plateNumber,
-      age: d.age,
-      address: d.address,
-      truckTypeId: d.truckTypeId?._id || '',
-      truckType,
-      productId: d.productId?._id || '',
-      productType,
-      companyId: d.companyId?._id || '',
-      company
-    });
-
-    setEditingId(d._id);
-    setErrors({});
-    setIsModalOpen(true);
-  };
-
-  const handleTruckTypeChange = (e) => {
-    const selectedId = e.target.value;
-    const selectedTruck = truckTypes.find(t => t._id === selectedId);
-    setFormData(prev => ({
-      ...prev,
-      truckTypeId: selectedId,
-      truckType: selectedTruck ? selectedTruck.type : ''
-    }));
-  };
-
-  const handleProductChange = (e) => {
-    const selectedId = e.target.value;
-    const selectedProduct = products.find(p => p._id === selectedId);
-    setFormData(prev => ({
-      ...prev,
-      productId: selectedId,
-      productType: selectedProduct ? selectedProduct.name : ''
-    }));
-  };
-
-  const handleCompanyChange = (e) => {
-    const selectedId = e.target.value;
-    const selectedCompany = companies.find(c => c._id === selectedId);
-    setFormData(prev => ({
-      ...prev,
-      companyId: selectedId,
-      company: selectedCompany ? selectedCompany.name : ''
-    }));
-  };
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return toast.error('Fix the errors in the form');
-    setIsLoading(true);
-
+  const fetchDrivers = async () => {
     try {
-      const url = editingId ? `/api/drivers/${editingId}` : '/api/drivers';
-      const method = editingId ? 'put' : 'post';
-
-      const res = await axios[method](url, formData);
-
-      if (method === 'post') {
-        setDrivers([res.data, ...drivers]);
-        toast.success('Driver added');
-      } else {
-        setDrivers(drivers.map(d => d._id === editingId ? res.data : d));
-        toast.success('Driver updated');
-      }
-
-      setIsModalOpen(false);
+      setIsLoading(true);
+      const res = await axios.get('/api/drivers');
+      setDrivers(res.data);
     } catch (err) {
-      console.error(err);
-      toast.error(editingId ? 'Failed to update driver' : 'Failed to add driver');
+      console.error('Failed to fetch drivers:', err);
+      toast.error('Failed to load drivers');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const onDelete = async (id) => {
-    if (!window.confirm('Delete this driver?')) return;
+  const handleSubmit = async () => {
+    if (!name.trim()) {
+      toast.error('Please enter a driver name');
+      return;
+    }
+
     try {
-      await axios.delete(`/api/drivers/${id}`);
-      setDrivers(drivers.filter(d => d._id !== id));
-      toast.warning('Driver deleted');
-    } catch {
-      toast.error('Delete failed');
+      if (editId) {
+        const res = await axios.put(`/api/drivers/${editId}`, { name });
+        setDrivers(prev => prev.map(d => d._id === editId ? res.data : d));
+        toast.success('Driver updated successfully!');
+      } else {
+        const res = await axios.post('/api/drivers', { name });
+        setDrivers(prev => [...prev, res.data]);
+        toast.success('Driver added successfully!');
+      }
+
+      setName('');
+      setEditId(null);
+      setShowModal(false);
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.error || 'Failed to save driver');
     }
   };
 
-  // Filtering logic
-  const filtered = drivers
-    .filter(d =>
-      (d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-       d.plateNumber.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (!ageMin || d.age >= +ageMin) &&
-      (!ageMax || d.age <= +ageMax) &&
-      (!filterTruckType || d.truckTypeId === filterTruckType)
-    )
-    .sort((a, b) => {
-      const valA = (a[sortField] || '').toString().toLowerCase();
-      const valB = (b[sortField] || '').toString().toLowerCase();
-      return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-    });
-
-  const pageCount = Math.ceil(filtered.length / PAGE_SIZE);
-  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  const exportExcel = () => {
-    setTimeout(() => {
-      const ws = XLSX.utils.json_to_sheet(filtered);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Drivers');
-      const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-      saveAs(new Blob([buf]), 'drivers.xlsx');
-    }, 500);
+  const handleEdit = (driver) => {
+    setName(driver.name);
+    setEditId(driver._id);
+    setShowModal(true);
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this driver?')) return;
+    try {
+      await axios.delete(`/api/drivers/${id}`);
+      setDrivers(prev => prev.filter(d => d._id !== id));
+      toast.success('Driver deleted');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to delete driver');
+    }
+  };
+
+  const filteredDrivers = drivers.filter(driver =>
+    driver.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const LoadingSkeleton = () => (
+    <div className="space-y-4">
+      {[1, 2, 3].map(i => (
+        <div key={i} className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 animate-pulse">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-slate-200 to-slate-300 rounded-xl"></div>
+              <div className="space-y-2">
+                <div className="h-4 bg-gradient-to-r from-slate-200 to-slate-300 rounded-full w-32"></div>
+                <div className="h-3 bg-gradient-to-r from-slate-200 to-slate-300 rounded-full w-24"></div>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <div className="w-16 h-8 bg-gradient-to-r from-slate-200 to-slate-300 rounded-lg"></div>
+              <div className="w-16 h-8 bg-gradient-to-r from-slate-200 to-slate-300 rounded-lg"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
-    <div className="p-4 md:p-6 bg-gray-100 min-h-screen">
-      <ToastContainer />
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
+      <div className="max-w-6xl mx-auto space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-2xl shadow-lg">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  Driver Management
+                </h1>
+                <p className="text-slate-600 text-lg">Manage your fleet drivers efficiently</p>
+              </div>
+            </div>
+          </div>
 
-      {/* Controls */}
-      <div className="mb-6 flex flex-wrap gap-3 items-center justify-between">
-        <input
-          type="text"
-          placeholder="Search"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          className="px-4 py-2 border rounded w-full sm:w-auto"
-        />
-        <div className="flex flex-wrap gap-2">
-          <input
-            type="number"
-            placeholder="Min Age"
-            value={ageMin}
-            onChange={e => setAgeMin(e.target.value)}
-            className="px-4 py-2 border rounded"
-          />
-          <input
-            type="number"
-            placeholder="Max Age"
-            value={ageMax}
-            onChange={e => setAgeMax(e.target.value)}
-            className="px-4 py-2 border rounded"
-          />
-          <select
-            value={filterTruckType}
-            onChange={e => setFilterTruckType(e.target.value)}
-            className="px-4 py-2 border rounded"
+          <button
+            onClick={() => {
+              setEditId(null);
+              setName('');
+              setShowModal(true);
+            }}
+            className="group relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
           >
-            <option value="">All Truck Types</option>
-            {truckTypes.map(t => (
-              <option key={t._id} value={t._id}>{t.type}</option>
-            ))}
-          </select>
-        </div>
-        <button onClick={openNew} className="ml-auto px-4 py-2 bg-blue-600 text-white rounded flex items-center gap-2">
-          <User size={18} /> Add Driver
-        </button>
-        <button onClick={exportExcel} className="px-4 py-2 bg-green-600 text-white rounded flex items-center gap-2">
-          <Download size={18} /> Export
-        </button>
-      </div>
-
-      {/* Table */}
-        <div className="overflow-x-auto bg-white shadow rounded-md">
-          <table className="w-full table-auto text-left">
-            <thead className="bg-gray-200">
-          <tr>
-            <th className="p-3">Name</th>
-            <th className="p-3">Plate Number</th>
-            <th className="p-3">Age</th>
-            <th className="p-3">Address</th>
-            <th className="p-3">Truck Type</th>
-            <th className="p-3">Product Type</th>
-            <th className="p-3">Company</th>
-            <th className="p-3">Actions</th>
-          </tr>
-            </thead>
-            <tbody>
-          {pageItems.length > 0 ? (
-            pageItems.map(d => (
-              <tr key={d._id} className="border-b hover:bg-gray-50">
-            <td className="p-3">{d.name}</td>
-            <td className="p-3">{d.plateNumber}</td>
-            <td className="p-3">{d.age}</td>
-            <td className="p-3">{d.address}</td>
-            <td className="p-3">{d.truckType}</td>
-            <td className="p-3">{d.productType}</td>
-            <td className="p-3">{d.company}</td>
-            <td className="p-3 flex gap-2">
-              <button
-                onClick={() => openEdit(d)}
-                className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
-              >
-                <Edit2 size={18} />
-                <span>Edit</span>
-              </button>
-              <button
-                onClick={() => onDelete(d._id)}
-                className="flex items-center gap-1 text-red-600 hover:text-red-800"
-              >
-                <Trash2 size={18} />
-                <span>Delete</span>
-              </button>
-            </td>
-              </tr>
-            ))
-          ) : (
-            <tr><td colSpan="8" className="p-4 text-center">No drivers found.</td></tr>
-          )}
-            </tbody>
-          </table>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="relative flex items-center gap-3">
+              <Plus className="w-5 h-5" />
+              Add New Driver
+              <Sparkles className="w-4 h-4 opacity-70" />
+            </div>
+          </button>
         </div>
 
-        {/* Pagination */}
-      {pageCount > 1 && (
-        <div className="flex justify-center gap-2 my-4">
-          <button disabled={page === 1} onClick={() => setPage(p => p - 1)} className="px-3 py-1 border rounded">Prev</button>
-          {[...Array(pageCount)].map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setPage(i + 1)}
-              className={`px-3 py-1 border rounded ${page === i + 1 ? 'bg-gray-300' : ''}`}
-            >
-              {i + 1}
-            </button>
-          ))}
-          <button disabled={page === pageCount} onClick={() => setPage(p => p + 1)} className="px-3 py-1 border rounded">Next</button>
-        </div>
-      )}
+        {/* Search and Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search drivers..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 bg-white/70 backdrop-blur-sm border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-300 text-lg"
+              />
+            </div>
+          </div>
 
-      {/* Modal Form */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full overflow-y-auto max-h-[90vh]">
-            <h2 className="text-xl font-bold mb-4">{editingId ? 'Edit' : 'Add'} Driver</h2>
-            <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {['name', 'plateNumber', 'age', 'address'].map(field => (
-                <div key={field}>
-                  <label className="block text-sm font-medium text-gray-700">{field}</label>
-                  <input
-                    type={field === 'age' ? 'number' : 'text'}
-                    value={formData[field] || ''}
-                    onChange={e => setFormData(prev => ({ ...prev, [field]: e.target.value }))}
-                    className={`w-full p-2 border rounded ${errors[field] ? 'border-red-500' : 'border-gray-300'}`}
-                  />
-                  {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
+          <div className="bg-gradient-to-br from-white/80 to-white/40 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-xl">
+            <div className="text-center">
+              <div className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                {drivers.length}
+              </div>
+              <div className="text-slate-600 font-medium">Total Drivers</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Drivers List */}
+        <div className="space-y-4">
+          {isLoading ? (
+            <LoadingSkeleton />
+          ) : filteredDrivers.length > 0 ? (
+            <div className="grid gap-4">
+              {filteredDrivers.map((driver, index) => (
+                <div
+                  key={driver._id}
+                  className="group bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] transition-all duration-300"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                      <div className="relative">
+                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                          <User className="w-8 h-8 text-white" />
+                        </div>
+                        <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg">
+                          {index + 1}
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <h3 className="text-xl font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">
+                          {driver.name}
+                        </h3>
+                        <div className="flex items-center gap-2 text-slate-500">
+                          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                          <span className="text-sm">Active Driver</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={() => handleEdit(driver)}
+                        className="group/btn relative overflow-hidden bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative flex items-center gap-2">
+                          <Edit3 className="w-4 h-4" />
+                          Edit
+                        </div>
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(driver._id)}
+                        className="group/btn relative overflow-hidden bg-gradient-to-r from-red-500 to-pink-500 text-white px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-red-500 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative flex items-center gap-2">
+                          <Trash2 className="w-4 h-4" />
+                          Delete
+                        </div>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ))}
+            </div>
+          ) : (
+            <div className="text-center py-20">
+              <div className="w-32 h-32 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <Users className="w-16 h-16 text-slate-400" />
+              </div>
+              <h3 className="text-2xl font-semibold text-slate-600 mb-2">No drivers found</h3>
+              <p className="text-slate-500 mb-8">Get started by adding your first driver to the system</p>
+              <button
+                onClick={() => {
+                  setEditId(null);
+                  setName('');
+                  setShowModal(true);
+                }}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
+              >
+                <Plus className="w-5 h-5 inline mr-2" />
+                Add Your First Driver
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
 
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity duration-300"
+            onClick={() => setShowModal(false)}
+          ></div>
+
+          <div className="relative bg-white/95 backdrop-blur-sm w-full max-w-md rounded-3xl shadow-2xl border border-white/20 p-8 z-10 transform transition-all duration-300 scale-100">
+            <div className="flex justify-between items-center mb-8">
               <div>
-                <label className="block mb-1">Truck Type</label>
-                <select
-                  value={formData.truckTypeId || ''}
-                  onChange={handleTruckTypeChange}
-                  className={`w-full p-2 border rounded ${errors.truckTypeId ? 'border-red-500' : 'border-gray-300'}`}
-                >
-                  <option value="">-- Select Truck --</option>
-                  {truckTypes.map(t => (
-                    <option key={t._id} value={t._id}>{t.type}</option>
-                  ))}
-                </select>
-                {errors.truckTypeId && <p className="text-red-500 text-sm mt-1">{errors.truckTypeId}</p>}
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  {editId ? 'Edit Driver' : 'Add New Driver'}
+                </h2>
+                <p className="text-slate-600 mt-1">
+                  {editId ? 'Update driver information' : 'Enter driver details below'}
+                </p>
               </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="p-3 hover:bg-slate-100 rounded-2xl transition-colors duration-200 group"
+              >
+                <X className="w-6 h-6 text-slate-400 group-hover:text-slate-600" />
+              </button>
+            </div>
 
+            <div className="space-y-6">
               <div>
-                <label className="block mb-1">Product (Optional)</label>
-                <select
-                  value={formData.productId || ''}
-                  onChange={handleProductChange}
-                  className="w-full p-2 border rounded"
-                >
-                  <option value="">-- Select Product --</option>
-                  {products.map(p => (
-                    <option key={p._id} value={p._id}>{p.name}</option>
-                  ))}
-                </select>
+                <label className="block text-sm font-semibold text-slate-700 mb-3">
+                  Driver Name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full pl-12 pr-4 py-4 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-300 text-lg bg-white/50 backdrop-blur-sm"
+                    placeholder="Enter driver name"
+                    autoFocus
+                  />
+                </div>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block mb-1">Company</label>
-                <select
-                  value={formData.companyId || ''}
-                  onChange={handleCompanyChange}
-                  className={`w-full p-2 border rounded ${errors.companyId ? 'border-red-500' : 'border-gray-300'}`}
-                >
-                  <option value="">-- Select Company --</option>
-                  {companies.map(c => (
-                    <option key={c._id} value={c._id}>{c.name}</option>
-                  ))}
-                </select>
-                {errors.companyId && <p className="text-red-500 text-sm mt-1">{errors.companyId}</p>}
-              </div>
-
-              <div className="md:col-span-2 flex justify-end gap-3 mt-4">
+              <div className="flex gap-4 pt-4">
                 <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 border rounded"
+                  onClick={() => setShowModal(false)}
+                  className="flex-1 px-6 py-4 rounded-2xl border-2 border-slate-200 text-slate-700 font-semibold hover:bg-slate-50 transition-all duration-300"
                 >
                   Cancel
                 </button>
                 <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded disabled:opacity-50"
+                  onClick={handleSubmit}
+                  className="flex-1 px-6 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
-                  {isLoading ? 'Saving...' : editingId ? 'Update' : 'Save'}
+                  {editId ? 'Update' : 'Create'}
                 </button>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       )}
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        className="mt-16"
+        toastClassName="rounded-2xl shadow-2xl"
+      />
     </div>
   );
 }

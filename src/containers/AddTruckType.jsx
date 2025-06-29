@@ -1,14 +1,10 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import {
-  Truck,
-  Plus,
-  Edit,
-  Trash2,
-  Search,
+  Plus, Edit, Trash2, Search
 } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from '../utils/axios'; 
 
 export default function AddTruckType() {
   const [formData, setFormData] = useState({ type: '' });
@@ -16,11 +12,15 @@ export default function AddTruckType() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [editId, setEditId] = useState(null);
-  const [confirmModal, setConfirmModal] = useState({ open: false, action: null, message: '', onConfirm: null });
+  const [confirmModal, setConfirmModal] = useState({
+    open: false,
+    action: null,
+    message: '',
+    onConfirm: null,
+  });
 
-  const API_URL = 'http://localhost:5000/api/trucks';
+  const API_URL = '/api/trucks';
 
-  // Load data
   useEffect(() => {
     fetchTruckTypes();
   }, []);
@@ -28,7 +28,7 @@ export default function AddTruckType() {
   const fetchTruckTypes = async () => {
     try {
       const res = await axios.get(API_URL);
-      setTruckTypes(res.data); // Expecting API to return [{ _id, type }]
+      setTruckTypes(res.data);
     } catch {
       toast.error('Failed to fetch truck types');
     }
@@ -53,8 +53,8 @@ export default function AddTruckType() {
       open: true,
       action: editId ? 'update' : 'add',
       message: editId
-        ? `Are you sure you want to update this truck type to "${formData.type}"?`
-        : `Are you sure you want to add truck type "${formData.type}"?`,
+        ? `Update truck type to "${formData.type}"?`
+        : `Add truck type "${formData.type}"?`,
       onConfirm: () => (editId ? updateType() : addType()),
     });
   };
@@ -64,33 +64,30 @@ export default function AddTruckType() {
       const res = await axios.post(API_URL, formData);
       setTruckTypes([res.data, ...truckTypes]);
       toast.success('Truck type added');
-      resetForm();
-      setIsModalOpen(false);
+      closeModal();
     } catch {
       toast.error('Failed to add truck type');
     }
-    setConfirmModal({ ...confirmModal, open: false });
+    setConfirmModal(prev => ({ ...prev, open: false }));
   };
 
   const updateType = async () => {
     try {
       const res = await axios.put(`${API_URL}/${editId}`, formData);
-      setTruckTypes(truckTypes.map(t => t._id === editId ? res.data : t));
+      setTruckTypes(truckTypes.map(t => (t._id === editId ? res.data : t)));
       toast.info('Truck type updated');
-      resetForm();
-      setIsModalOpen(false);
-      setEditId(null);
+      closeModal();
     } catch {
       toast.error('Failed to update truck type');
     }
-    setConfirmModal({ ...confirmModal, open: false });
+    setConfirmModal(prev => ({ ...prev, open: false }));
   };
 
   const handleDelete = (id, type) => {
     setConfirmModal({
       open: true,
       action: 'delete',
-      message: `Are you sure you want to delete truck type "${type}"?`,
+      message: `Delete truck type "${type}"?`,
       onConfirm: () => deleteType(id),
     });
   };
@@ -103,31 +100,31 @@ export default function AddTruckType() {
     } catch {
       toast.error('Failed to delete truck type');
     }
-    setConfirmModal({ ...confirmModal, open: false });
+    setConfirmModal(prev => ({ ...prev, open: false }));
   };
 
   const editType = (id) => {
-    const toEdit = truckTypes.find(t => t._id === id);
-    if (!toEdit) return;
-    setFormData({ type: toEdit.type });
-    setEditId(id);
-    setIsModalOpen(true);
+    const t = truckTypes.find(t => t._id === id);
+    if (t) {
+      setFormData({ type: t.type });
+      setEditId(id);
+      setIsModalOpen(true);
+    }
   };
 
-  const resetForm = () => {
+  const closeModal = () => {
     setFormData({ type: '' });
     setEditId(null);
+    setIsModalOpen(false);
   };
 
-  const displayTypes = () =>
-    truckTypes.filter(t =>
-      t.type.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const filtered = truckTypes.filter(t =>
+    t.type.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <ToastContainer />
-      {/* Header and Controls */}
       <div className="max-w-6xl mx-auto mb-8">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
           Manage Truck Types
@@ -141,7 +138,7 @@ export default function AddTruckType() {
             type="text"
             placeholder="Search by type..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             className="w-full px-4 py-2 pl-10 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -149,7 +146,8 @@ export default function AddTruckType() {
 
         <button
           onClick={() => {
-            resetForm();
+            setFormData({ type: '' });
+            setEditId(null);
             setIsModalOpen(true);
           }}
           className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl font-semibold shadow-md flex items-center gap-2"
@@ -169,8 +167,8 @@ export default function AddTruckType() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {displayTypes().length > 0 ? (
-              displayTypes().map(t => (
+            {filtered.length > 0 ? (
+              filtered.map(t => (
                 <tr key={t._id}>
                   <td className="px-6 py-4">{t._id}</td>
                   <td className="px-6 py-4">{t.type}</td>
@@ -203,7 +201,7 @@ export default function AddTruckType() {
         </table>
       </div>
 
-      {/* Add/Edit Modal */}
+      {/* Modal Form */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-2xl shadow-xl max-w-2xl w-full">
@@ -221,10 +219,7 @@ export default function AddTruckType() {
               <div className="flex justify-end gap-4">
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    resetForm();
-                  }}
+                  onClick={closeModal}
                   className="text-gray-600"
                 >
                   Cancel
@@ -250,7 +245,7 @@ export default function AddTruckType() {
             <div className="flex justify-end gap-4">
               <button
                 className="text-gray-600"
-                onClick={() => setConfirmModal({ ...confirmModal, open: false })}
+                onClick={() => setConfirmModal(prev => ({ ...prev, open: false }))}
               >
                 Cancel
               </button>
