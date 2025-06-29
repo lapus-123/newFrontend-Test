@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .loader {
   border-radius: 9999px;
   border-width: 4px;
