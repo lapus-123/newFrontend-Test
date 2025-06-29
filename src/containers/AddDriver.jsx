@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../utils/axios';
-import { Plus, X, User, Edit3, Trash2, Users, Search, Sparkles } from 'lucide-react';
+import { Plus, X, User, Edit3, Trash2, Users, Search, Sparkles, Car } from 'lucide-react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -8,6 +8,7 @@ export default function Driver() {
   const [drivers, setDrivers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [name, setName] = useState('');
+  const [plateNumber, setPlateNumber] = useState('');
   const [editId, setEditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -37,16 +38,23 @@ export default function Driver() {
 
     try {
       if (editId) {
-        const res = await axios.put(`/api/drivers/${editId}`, { name });
+        const res = await axios.put(`/api/drivers/${editId}`, {
+          name,
+          plateNumber,
+        });
         setDrivers(prev => prev.map(d => d._id === editId ? res.data : d));
         toast.success('Driver updated successfully!');
       } else {
-        const res = await axios.post('/api/drivers', { name });
+        const res = await axios.post('/api/drivers', {
+          name,
+          plateNumber,
+        });
         setDrivers(prev => [...prev, res.data]);
         toast.success('Driver added successfully!');
       }
 
       setName('');
+      setPlateNumber('');
       setEditId(null);
       setShowModal(false);
     } catch (err) {
@@ -57,6 +65,7 @@ export default function Driver() {
 
   const handleEdit = (driver) => {
     setName(driver.name);
+    setPlateNumber(driver.plateNumber || '');
     setEditId(driver._id);
     setShowModal(true);
   };
@@ -74,7 +83,8 @@ export default function Driver() {
   };
 
   const filteredDrivers = drivers.filter(driver =>
-    driver.name.toLowerCase().includes(searchTerm.toLowerCase())
+    driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (driver.plateNumber || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const LoadingSkeleton = () => (
@@ -122,6 +132,7 @@ export default function Driver() {
             onClick={() => {
               setEditId(null);
               setName('');
+              setPlateNumber('');
               setShowModal(true);
             }}
             className="group relative overflow-hidden bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
@@ -142,7 +153,7 @@ export default function Driver() {
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search drivers..."
+                placeholder="Search by name or plate number..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-4 bg-white/70 backdrop-blur-sm border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-300 text-lg"
@@ -160,7 +171,7 @@ export default function Driver() {
           </div>
         </div>
 
-        {/* Drivers List */}
+        {/* Driver List */}
         <div className="space-y-4">
           {isLoading ? (
             <LoadingSkeleton />
@@ -186,10 +197,10 @@ export default function Driver() {
                         <h3 className="text-xl font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors duration-300">
                           {driver.name}
                         </h3>
-                        <div className="flex items-center gap-2 text-slate-500">
-                          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                          <span className="text-sm">Active Driver</span>
-                        </div>
+                        <p className="text-sm text-slate-500 flex items-center gap-1">
+                          <Car className="w-4 h-4 text-slate-400" />
+                          {driver.plateNumber || 'No plate'}
+                        </p>
                       </div>
                     </div>
 
@@ -231,6 +242,7 @@ export default function Driver() {
                 onClick={() => {
                   setEditId(null);
                   setName('');
+                  setPlateNumber('');
                   setShowModal(true);
                 }}
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
@@ -283,6 +295,22 @@ export default function Driver() {
                     className="w-full pl-12 pr-4 py-4 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-300 text-lg bg-white/50 backdrop-blur-sm"
                     placeholder="Enter driver name"
                     autoFocus
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-3">
+                  Plate Number
+                </label>
+                <div className="relative">
+                  <Car className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    value={plateNumber}
+                    onChange={(e) => setPlateNumber(e.target.value)}
+                    className="w-full pl-12 pr-4 py-4 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all duration-300 text-lg bg-white/50 backdrop-blur-sm"
+                    placeholder="Enter plate number"
                   />
                 </div>
               </div>

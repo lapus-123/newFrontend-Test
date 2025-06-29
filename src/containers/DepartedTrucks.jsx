@@ -48,14 +48,10 @@ export default function DepartedTrucks() {
     setTimeout(() => {
       const exportData = filteredData.map((d) => ({
         Driver: d.name,
-        'Arrival Date': d.arrivalTime ? new Date(d.arrivalTime).toLocaleDateString() : 'N/A',
-        'Arrival Time': d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
         'Departure Date': d.departureTime ? new Date(d.departureTime).toLocaleDateString() : 'N/A',
         'Departure Time': d.departureTime ? new Date(d.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
         Company: d.company,
-        'Product Type': d.productType,
-        'DN Number': d.dnNumber || 'N/A',
-        Destination: d.destination || 'N/A'
+        'DN Number': d.dnNumber || 'N/A'
       }));
 
       const ws = XLSX.utils.json_to_sheet(exportData);
@@ -115,14 +111,10 @@ export default function DepartedTrucks() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Time</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure Time</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Type</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DN Number</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -130,21 +122,13 @@ export default function DepartedTrucks() {
                       <tr key={d._id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {d.arrivalTime ? new Date(d.arrivalTime).toLocaleDateString() : 'N/A'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                           {d.departureTime ? new Date(d.departureTime).toLocaleDateString() : 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                           {d.departureTime ? new Date(d.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.company}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.productType}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.dnNumber || 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.destination || 'N/A'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -152,13 +136,13 @@ export default function DepartedTrucks() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between mt-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === 1
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-purple-600 text-white hover:bg-purple-700'
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-purple-600 text-white hover:bg-purple-700'
                   }`}
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -172,8 +156,8 @@ export default function DepartedTrucks() {
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === totalPages
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-purple-600 text-white hover:bg-purple-700'
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-purple-600 text-white hover:bg-purple-700'
                   }`}
               >
                 Next

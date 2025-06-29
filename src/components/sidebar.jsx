@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import useLogout from '../functions/Logout'; // ✅ Custom logout hook
+import useLogout from '../functions/Logout';
 
 const sidebarLinks = [
   { type: 'section', label: 'Add Section' },
   { label: 'Driver Management', iconClass: 'bx bxs-user-plus', path: '/client/add-driver-client' },
 ];
+
+// Define known paths for validation
+const validPaths = new Set(sidebarLinks.filter(item => item.path).map(item => item.path));
 
 function MenuItem({ item, collapsed, isActive, handleLinkClick }) {
   if (item.type === 'section') {
@@ -27,7 +30,10 @@ function MenuItem({ item, collapsed, isActive, handleLinkClick }) {
         className={`flex items-center h-12 rounded-xl transition duration-300 px-3 ${isActive ? 'bg-white text-slate-900' : 'hover:bg-white/10 text-white'
           }`}
       >
-        <i className={`${item.iconClass} text-lg`} style={{ minWidth: '40px', textAlign: 'center' }}></i>
+        <i
+          className={`${item.iconClass} text-lg`}
+          style={{ minWidth: '40px', textAlign: 'center' }}
+        ></i>
         <span className={`text-sm transition-opacity duration-300 ${collapsed ? 'hidden' : 'inline'}`}>
           {item.label}
         </span>
@@ -41,10 +47,15 @@ export default function Sidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const logout = useLogout(); // ✅ use logout hook
+  const logout = useLogout();
 
   const handleLinkClick = (path) => {
-    navigate(path);
+    // ✅ Check if path is valid; else go to error page
+    if (validPaths.has(path)) {
+      navigate(path);
+    } else {
+      navigate('/error/404');
+    }
     setMobileOpen(false);
   };
 
@@ -81,7 +92,7 @@ export default function Sidebar() {
         ))}
       </ul>
 
-      {/* Logout Button and Footer */}
+      {/* Logout + Footer */}
       <div className="px-4 py-4 bg-gray-800 flex flex-col items-center gap-3">
         <button
           onClick={logout}

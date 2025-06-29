@@ -62,8 +62,8 @@ export default function ArrivedTrucks() {
         Driver: d.name,
         'Arrival Date': d.arrivalTime ? new Date(d.arrivalTime).toLocaleDateString() : 'N/A',
         'Arrival Time': d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-        Company: d.company,
-        'Product Type': d.productType,
+        Company: d.companyId?.name || d.company || 'N/A',
+        Product: d.productId?.name || 'N/A',
         Destination: d.destination || 'N/A'
       }));
 
@@ -128,7 +128,7 @@ export default function ArrivedTrucks() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Time</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Type</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
                     </tr>
                   </thead>
@@ -142,8 +142,8 @@ export default function ArrivedTrucks() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                           {d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.company}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.productType}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.companyId?.name || d.company || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.productId?.name || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.destination || 'N/A'}</td>
                       </tr>
                     ))}

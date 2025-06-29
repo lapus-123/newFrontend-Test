@@ -6,6 +6,7 @@ import {
 import axios from '../utils/axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import * as XLSX from 'xlsx';
 
 export default function DriverManagement() {
     const [drivers, setDrivers] = useState([]);
@@ -18,14 +19,14 @@ export default function DriverManagement() {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredDrivers, setFilteredDrivers] = useState([]);
     const [selectedDriver, setSelectedDriver] = useState(null);
-
-
     const [formData, setFormData] = useState({
         company: '',
         truckType: '',
         timestamp: '',
         destination: '',
-        product: ''
+        product: '', // will be productId
+        plateNumber: '',
+        dnNumber: ''
     });
 
     useEffect(() => {
@@ -95,7 +96,9 @@ export default function DriverManagement() {
             truckType: '',
             timestamp: '',
             destination: '',
-            product: ''
+            product: '',
+            plateNumber: '',
+            dnNumber: ''
         });
     };
 
@@ -116,12 +119,15 @@ export default function DriverManagement() {
         setSelectedDriver(driver);
         setSearchTerm(driver.name);
         setFilteredDrivers([]);
+
         setFormData({
             company: driver.company || '',
             truckType: driver.truckType || '',
             timestamp: '',
             destination: driver.destination || '',
-            product: driver.product || ''
+            product: driver.productId || '', // ✅ Use productId
+            plateNumber: driver.plateNumber || '',
+            dnNumber: driver.dnNumber || ''
         });
     };
 
@@ -132,30 +138,28 @@ export default function DriverManagement() {
 
     const handleSubmit = async () => {
         if (!selectedDriver) {
-            console.warn('No driver selected.');
+            toast.error("No driver selected.");
             return;
         }
 
         const selectedCompany = companies.find(c => c.name === formData.company);
         const selectedTruck = trucks.find(t => t.type === formData.truckType);
-        const selectedProduct = products.find(p => p._id === formData.product); // 🔁 match by _id
+        const selectedProduct = products.find(p => p._id === formData.product); // Match by _id
 
         const payload = {
             name: selectedDriver.name,
-            plateNumber: selectedDriver.plateNumber || null,
+            plateNumber: formData.plateNumber || null,
             age: selectedDriver.age || 0,
             address: selectedDriver.address || '',
             company: formData.company || '',
             companyId: selectedCompany?._id || null,
             truckTypeId: selectedTruck?._id || null,
-            productId: selectedProduct?._id || null, // ✅ now properly matched by _id
-            dnNumber: selectedDriver.dnNumber || '',
+            productId: selectedProduct?._id || null, // ✅ Send only ID
+            dnNumber: formData.dnNumber || '',
             arrivalTime: mode === 'arrival' ? formData.timestamp : selectedDriver.arrivalTime || '',
             departureTime: mode === 'departure' ? formData.timestamp : selectedDriver.departureTime || '',
             destination: mode === 'departure' ? formData.destination : selectedDriver.destination || ''
         };
-
-        console.log('Submitting PUT payload:', payload);
 
         try {
             const res = await axios.put(`/api/drivers/${selectedDriver._id}`, payload);
@@ -168,7 +172,7 @@ export default function DriverManagement() {
                     updated[index] = updatedDriver;
                     return updated;
                 }
-                return prev;
+                return [...prev, updatedDriver];
             });
 
             toast.success('Record updated successfully!');
@@ -179,7 +183,30 @@ export default function DriverManagement() {
         }
     };
 
+    const ExcelExport = () => {
+        // Format data for export
+        const exportData = records.map(rec => ({
+            Driver: rec.name,
+            'Plate Number': rec.plateNumber || 'N/A',
+            Company: rec.companyId?.name || rec.company || 'N/A',
+            'Truck Type': rec.truckTypeId?.type || rec.truckType || 'N/A',
+            'Arrival Time': rec.arrivalTime || 'N/A',
+            'Departure Time': rec.departureTime || 'N/A',
+            Destination: rec.destination || 'N/A',
+            Product: rec.productId?.name || 'N/A',
+            'DN Number': rec.dnNumber || 'N/A'
+        }));
 
+        // Create worksheet
+        const ws = XLSX.utils.json_to_sheet(exportData);
+
+        // Create workbook
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Driver Records');
+
+        // Trigger download
+        XLSX.writeFile(wb, 'DriverRecords.xlsx');
+    };
     return (
         <>
             <div className="min-h-screen bg-slate-50 p-4 lg:p-6">
@@ -205,6 +232,12 @@ export default function DriverManagement() {
                                 >
                                     <ArrowLeft className="w-4 h-4" />
                                     Record Departure
+                                </button>
+                                <button
+                                    onClick={() => ExcelExport()}
+                                    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
+                                >
+                                    Export Excel
                                 </button>
                             </div>
                         </div>
@@ -268,12 +301,14 @@ export default function DriverManagement() {
                                 <thead className="bg-slate-50 border-b border-slate-200">
                                     <tr>
                                         <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Driver</th>
+                                        <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Plate No.</th>
                                         <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
                                         <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Truck Type</th>
                                         <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Arrival</th>
                                         <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Departure</th>
                                         <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Destination</th>
                                         <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Product</th>
+                                        <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">DN Number</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-200">
@@ -288,8 +323,9 @@ export default function DriverManagement() {
                                                         <span className="font-medium text-slate-900">{rec.name}</span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 text-slate-600">{rec.company || '—'}</td>
-                                                <td className="px-6 py-4 text-slate-600">{rec.truckType || '—'}</td>
+                                                <td className="px-6 py-4 text-slate-600">{rec.plateNumber || '—'}</td>
+                                                <td className="px-6 py-4 text-slate-600">{rec.companyId?.name || rec.company || '—'}</td>
+                                                <td className="px-6 py-4 text-slate-600">{rec.truckTypeId?.type || rec.truckType || '—'}</td>
                                                 <td className="px-6 py-4">
                                                     {rec.arrivalTime ? (
                                                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
@@ -311,12 +347,15 @@ export default function DriverManagement() {
                                                     )}
                                                 </td>
                                                 <td className="px-6 py-4 text-slate-600">{rec.destination || '—'}</td>
-                                                <td className="px-6 py-4 text-slate-600">{rec.productType || '—'}</td>
+                                                <td className="px-6 py-4 text-slate-600">
+                                                    {rec.productId?.name || '—'}
+                                                </td>
+                                                <td className="px-6 py-4 text-slate-600">{rec.dnNumber || '—'}</td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan="7" className="px-6 py-12 text-center">
+                                            <td colSpan="9" className="px-6 py-12 text-center">
                                                 <div className="flex flex-col items-center gap-2">
                                                     <div className="bg-slate-100 p-3 rounded-full">
                                                         <Truck className="w-6 h-6 text-slate-400" />
@@ -423,7 +462,6 @@ export default function DriverManagement() {
                                             ))}
                                         </select>
                                     </div>
-
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-slate-700">Truck Type</label>
                                         <select
@@ -438,6 +476,18 @@ export default function DriverManagement() {
                                             ))}
                                         </select>
                                     </div>
+                                </div>
+
+                                {/* Plate Number */}
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-slate-700">Plate Number</label>
+                                    <input
+                                        name="plateNumber"
+                                        value={formData.plateNumber}
+                                        onChange={handleInputChange}
+                                        placeholder="Enter plate number"
+                                        className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    />
                                 </div>
 
                                 {/* Timestamp */}
@@ -486,9 +536,19 @@ export default function DriverManagement() {
                                             >
                                                 <option value="">Select Product</option>
                                                 {products.map(p => (
-                                                    <option key={p._id} value={p._id}>{p.name}</option> // ⬅️ use ID as value
+                                                    <option key={p._id} value={p._id}>{p.name}</option>
                                                 ))}
                                             </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-medium text-slate-700">DN Number</label>
+                                            <input
+                                                name="dnNumber"
+                                                value={formData.dnNumber}
+                                                onChange={handleInputChange}
+                                                placeholder="Enter DN number"
+                                                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            />
                                         </div>
                                     </div>
                                 )}
@@ -519,6 +579,7 @@ export default function DriverManagement() {
                     </div>
                 )}
             </div>
+
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -532,4 +593,4 @@ export default function DriverManagement() {
             />
         </>
     );
-} 
+}

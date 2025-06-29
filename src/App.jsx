@@ -1,12 +1,13 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 // Auth Pages
 import Login from './containers/Home/Login';
 import Register from './containers/Home/Register';
 import ForgotPassword from './containers/Home/ForgotPassword';
-import logout from './functions/Logout'; // ✅ Function, not a component
+import logout from './functions/Logout';
 
-// Admin Layout + Pages
+// Admin Pages
 import AdminDashboard from './containers/Admin/AdminDashboard';
 import Home from './containers/Home';
 import AddDriver from './containers/AddDriver';
@@ -20,14 +21,12 @@ import CompaniesHistory from './containers/CompaniesHistory';
 import Summary from './containers/Summary';
 import AddDriverClient from './containers/AddDriversClient';
 import DriverManagement from './containers/DriverManagement';
-// Client Layout + Pages
+
+// Client Pages
 import ClientDashboard from './containers/Client/ClientDashboard';
 
-// Error Page
+// Error Page (Enhanced)
 import Error404 from './errors/Error404';
-
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 // 🔁 Logout Redirect Component
 function LogoutRedirect() {
@@ -71,9 +70,16 @@ export default function App() {
           <Route path="add-driver-client" element={<AddDriverClient />} />
         </Route>
 
+        {/* Custom Error Routes */}
+        <Route path="/error/403" element={<Error404 code={403} />} />
+        <Route path="/error/408" element={<Error404 code={408} />} />
+        <Route path="/error/500" element={<Error404 code={500} />} />
+        <Route path="/error/502" element={<Error404 code={502} />} />
+        <Route path="/error/503" element={<Error404 code={503} />} />
+        <Route path="/error/504" element={<Error404 code={504} />} />
 
         {/* 404 Fallback */}
-        <Route path="*" element={<Error404 />} />
+        <Route path="*" element={<Error404 code={404} />} />
       </Routes>
     </div>
   );
