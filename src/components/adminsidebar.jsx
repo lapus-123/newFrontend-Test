@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const sidebarLinks = [
-    { type: 'section', label: 'Main' },
-    { label: 'Home', iconClass: 'bx bxs-home', path: '/admin/home' },
 
     { type: 'section', label: 'Management' },
     { label: 'Driver Managememt', iconClass: 'bx bxs-user-plus', path: '/admin/driver-management' },

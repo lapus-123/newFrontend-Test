@@ -19,6 +19,7 @@ export default function ArrivedTrucks() {
   const [page, setPage] = useState(1);
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
 
+  // Fetch data and filter only arrived trucks
   useEffect(() => {
     async function fetchData() {
       try {
@@ -34,26 +35,27 @@ export default function ArrivedTrucks() {
     fetchData();
   }, []);
 
+  // Handle search input
   useEffect(() => {
     const term = search.trim().toLowerCase();
     if (!term) {
       setFilteredData(drivers);
     } else {
       setFilteredData(
-        drivers.filter(
-          (d) => d.name?.toLowerCase().includes(term)
-        )
+        drivers.filter(d => d.name?.toLowerCase().includes(term))
       );
     }
     setPage(1);
   }, [search, drivers]);
 
+  // Pagination
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   const paginatedData = filteredData.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
 
+  // Export to Excel
   const handleDownload = () => {
     setShowDownloadPopup(true);
 
@@ -62,9 +64,7 @@ export default function ArrivedTrucks() {
         Driver: d.name,
         'Arrival Date': d.arrivalTime ? new Date(d.arrivalTime).toLocaleDateString() : 'N/A',
         'Arrival Time': d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-        Company: d.companyId?.name || d.company || 'N/A',
-        Product: d.productId?.name || 'N/A',
-        Destination: d.destination || 'N/A'
+        Company: d.companyId?.name || d.company || 'N/A'
       }));
 
       const ws = XLSX.utils.json_to_sheet(exportData);
@@ -83,6 +83,7 @@ export default function ArrivedTrucks() {
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-blue-600 mb-6">Arrived Trucks</h1>
 
+        {/* Filters */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             <div className="relative flex-grow w-full sm:w-auto">
@@ -105,12 +106,14 @@ export default function ArrivedTrucks() {
           </div>
         </div>
 
+        {/* Download popup */}
         {showDownloadPopup && (
           <div className="fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded-md shadow-lg animate-pulse z-50">
             Preparing Excel file...
           </div>
         )}
 
+        {/* No data fallback */}
         {paginatedData.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-10 text-center">
             <Truck className="mx-auto w-12 h-12 text-gray-300" />
@@ -119,6 +122,7 @@ export default function ArrivedTrucks() {
           </div>
         ) : (
           <>
+            {/* Table */}
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -128,8 +132,6 @@ export default function ArrivedTrucks() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Time</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -143,8 +145,6 @@ export default function ArrivedTrucks() {
                           {d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.companyId?.name || d.company || 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.productId?.name || 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.destination || 'N/A'}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -152,6 +152,7 @@ export default function ArrivedTrucks() {
               </div>
             </div>
 
+            {/* Pagination */}
             <div className="flex items-center justify-between mt-6">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}

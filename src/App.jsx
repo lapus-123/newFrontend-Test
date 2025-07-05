@@ -50,7 +50,7 @@ export default function App() {
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminDashboard />}>
-          <Route index element={<Home />} />
+          <Route index element={<DriverManagement />} />
           <Route path="home" element={<Home />} />
           <Route path="add-driver" element={<AddDriver />} />
           <Route path="add-company" element={<AddCompany />} />

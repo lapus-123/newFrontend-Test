@@ -31,7 +31,7 @@ export default function CompaniesHistory() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  // Load driver data grouped by company
+  // Load all driver data grouped by company
   useEffect(() => {
     async function fetchData() {
       try {
@@ -39,10 +39,18 @@ export default function CompaniesHistory() {
         const drivers = res.data;
 
         const grouped = {};
+
         drivers.forEach(d => {
-          const key = d.company;
-          if (!grouped[key]) grouped[key] = 0;
-          grouped[key]++;
+          // Extract company name safely
+          const companyName = d.companyId?.name || d.company || 'Unknown';
+
+          if (!companyName) return;
+
+          const arrivalTime = d.arrivalTime ? new Date(d.arrivalTime) : null;
+          if (!arrivalTime || isNaN(arrivalTime.getTime())) return;
+
+          if (!grouped[companyName]) grouped[companyName] = 0;
+          grouped[companyName]++;
         });
 
         const chartData = Object.entries(grouped).map(([name, count]) => ({ name, count }));
@@ -56,12 +64,46 @@ export default function CompaniesHistory() {
     fetchData();
   }, []);
 
-  // Handle date filtering (you can extend this later based on arrivalTime)
-  const handleFilter = () => {
-    // Placeholder logic — currently just returns all data
-    // Later you can filter by arrivalTime range
-    const filtered = companyData; // Replace with real date filtering
-    setFilteredData(filtered);
+  // Handle date filtering based on arrivalTime
+  const handleFilter = async () => {
+    if (!startDate && !endDate) {
+      setFilteredData(companyData);
+      return;
+    }
+
+    try {
+      const res = await axios.get('/api/drivers');
+      const drivers = res.data;
+
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      end.setHours(23, 59, 59, 999); // End of the day
+
+      const filteredDrivers = drivers.filter(d => {
+        const arrival = d.arrivalTime ? new Date(d.arrivalTime) : null;
+        if (!arrival || isNaN(arrival.getTime())) return false;
+
+        const inRange =
+          (!startDate || arrival >= start) &&
+          (!endDate || arrival <= end);
+
+        return inRange;
+      });
+
+      // Group filtered drivers by company
+      const grouped = {};
+      filteredDrivers.forEach(d => {
+        const companyName = d.companyId?.name || d.company || 'Unknown';
+
+        if (!grouped[companyName]) grouped[companyName] = 0;
+        grouped[companyName]++;
+      });
+
+      const chartData = Object.entries(grouped).map(([name, count]) => ({ name, count }));
+      setFilteredData(chartData);
+    } catch (err) {
+      console.error('Error filtering data:', err);
+    }
   };
 
   // Download chart as PNG
@@ -78,9 +120,10 @@ export default function CompaniesHistory() {
 
   // Export to Excel
   const exportToExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(filteredData, {
-      header: ['name', 'count']
-    });
+    const ws = XLSX.utils.json_to_sheet(filteredData.map(d => ({
+      Company: d.name,
+      Trucks: d.count
+    })));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Companies History');
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
@@ -172,10 +215,7 @@ export default function CompaniesHistory() {
 
         {/* Bar Chart */}
         <div id="companies-chart-container" className="w-full h-96 bg-white p-4 rounded-lg shadow-inner">
-          <Bar data={{
-            labels: chartData.labels,
-            datasets: chartData.datasets
-          }} options={options} />
+          <Bar data={chartData} options={options} />
         </div>
       </div>
     </div>

@@ -18,6 +18,7 @@ export default function DepartedTrucks() {
   const [page, setPage] = useState(1);
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
 
+  // Fetch data and filter only departed trucks
   useEffect(() => {
     async function fetchData() {
       try {
@@ -32,16 +33,19 @@ export default function DepartedTrucks() {
     fetchData();
   }, []);
 
+  // Filter by driver name
   const filteredData = drivers.filter(
     (d) => d.name?.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Pagination logic
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
   const paginatedData = filteredData.slice(
     (page - 1) * ITEMS_PER_PAGE,
     page * ITEMS_PER_PAGE
   );
 
+  // Export to Excel
   const handleDownload = () => {
     setShowDownloadPopup(true);
 
@@ -50,7 +54,6 @@ export default function DepartedTrucks() {
         Driver: d.name,
         'Departure Date': d.departureTime ? new Date(d.departureTime).toLocaleDateString() : 'N/A',
         'Departure Time': d.departureTime ? new Date(d.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-        Company: d.company,
         'DN Number': d.dnNumber || 'N/A'
       }));
 
@@ -71,6 +74,7 @@ export default function DepartedTrucks() {
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-purple-600 mb-6">Departed Trucks</h1>
 
+        {/* Filters */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
           <div className="relative w-full sm:w-64">
             <input
@@ -91,12 +95,14 @@ export default function DepartedTrucks() {
           </button>
         </div>
 
+        {/* Download Popup */}
         {showDownloadPopup && (
           <div className="fixed bottom-6 right-6 bg-black text-white px-4 py-2 rounded-md shadow-lg animate-pulse z-50">
             Preparing Excel file...
           </div>
         )}
 
+        {/* No Data Fallback */}
         {paginatedData.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-10 text-center">
             <Truck className="mx-auto w-12 h-12 text-gray-300" />
@@ -105,6 +111,7 @@ export default function DepartedTrucks() {
           </div>
         ) : (
           <>
+            {/* Table */}
             <div className="bg-white rounded-xl shadow-md overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -113,7 +120,6 @@ export default function DepartedTrucks() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure Time</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DN Number</th>
                     </tr>
                   </thead>
@@ -127,7 +133,6 @@ export default function DepartedTrucks() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                           {d.departureTime ? new Date(d.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.company}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.dnNumber || 'N/A'}</td>
                       </tr>
                     ))}
@@ -136,6 +141,7 @@ export default function DepartedTrucks() {
               </div>
             </div>
 
+            {/* Pagination */}
             <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}

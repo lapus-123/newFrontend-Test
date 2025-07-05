@@ -9,7 +9,8 @@ import {
   Truck,
   Download,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Calendar
 } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 10;
@@ -19,19 +20,24 @@ export default function DriverHistory() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCompany, setSelectedCompany] = useState('All');
   const [companies, setCompanies] = useState(['All']);
+  const [filterDate, setFilterDate] = useState('');
   const [page, setPage] = useState(1);
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
 
-  // Load all drivers (no filtering here)
+  // Load all drivers
   useEffect(() => {
     async function fetchData() {
       try {
         const res = await axios.get('/api/drivers');
-        const driverList = res.data;
+        const driverList = res.data.map((d) => ({
+          ...d,
+          company: d.companyId?.name || 'N/A',
+          product: d.productId?.name || 'N/A',
+        }));
 
         setDrivers(driverList);
 
-        // Extract companies
+        // Extract unique companies
         const companyList = [...new Set(driverList.map(d => d.company))];
         setCompanies(['All', ...companyList]);
       } catch (err) {
@@ -50,11 +56,7 @@ export default function DriverHistory() {
     const cutoff = new Date(date);
     cutoff.setHours(15, 0, 0); // 3:00 PM
 
-    if (date <= cutoff) {
-      return 'Full Time';
-    } else {
-      return 'Overtime';
-    }
+    return date <= cutoff ? 'Full Time' : 'Overtime';
   };
 
   // Format timeIn and timeOut
@@ -69,16 +71,25 @@ export default function DriverHistory() {
     });
   };
 
+  // Format date only
+  const formatDate = (dateStr) => {
+    if (!dateStr) return 'N/A';
+    const date = new Date(dateStr);
+    return date.toISOString().split('T')[0]; // YYYY-MM-DD
+  };
+
   // Filter data
   const filteredData = drivers.filter((d) => {
-    const matchesSearch = !searchTerm ||
+    const matchesSearch =
+      !searchTerm ||
       d.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       d.plateNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.truckType?.toLowerCase().includes(searchTerm.toLowerCase());
+      d.truckTypeId?.type?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCompany = selectedCompany === 'All' || d.company === selectedCompany;
+    const matchesDate = !filterDate || formatDate(d.arrivalTime) === filterDate;
 
-    return matchesSearch && matchesCompany;
+    return matchesSearch && matchesCompany && matchesDate;
   });
 
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
@@ -95,10 +106,10 @@ export default function DriverHistory() {
       const excelData = filteredData.map((d) => ({
         'Truck Number': d.plateNumber,
         'Driver Name': d.name,
-        'Arrival Time': d.arrivalTime || 'N/A',
-        'Departure Time': d.departureTime || 'N/A',
+        'Arrival Time': d.arrivalTime ? formatTime(d.arrivalTime) : 'N/A',
+        'Departure Time': d.departureTime ? formatTime(d.departureTime) : 'N/A',
         'Company': d.company,
-        'Product Type': d.productType,
+        'Product Type': d.product,
         'DN Number': d.dnNumber || 'N/A',
         'Status': getStatus(d.arrivalTime),
         'Destination': d.destination || 'N/A'
@@ -142,13 +153,29 @@ export default function DriverHistory() {
 
           <select
             value={selectedCompany}
-            onChange={(e) => setSelectedCompany(e.target.value)}
+            onChange={(e) => {
+              setSelectedCompany(e.target.value);
+              setPage(1);
+            }}
             className="px-4 py-2 border rounded"
           >
             {companies.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
+
+          <div className="flex items-center gap-2 border rounded px-3 py-1">
+            <Calendar size={18} className="text-gray-500" />
+            <input
+              type="date"
+              value={filterDate}
+              onChange={(e) => {
+                setFilterDate(e.target.value);
+                setPage(1);
+              }}
+              className="border-none focus:outline-none"
+            />
+          </div>
 
           <button
             onClick={exportToExcel}
@@ -180,10 +207,10 @@ export default function DriverHistory() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      {['Truck Number', 'Driver Name', 'Arrival Time', 'Departure Time', 'Company', 'Product Type', 'DN Number', 'Status', 'Destination'].map(header => (
+                      {['Truck #', 'Driver', 'Arrival', 'Departure', 'Company', 'Product', 'DN #', 'Status', 'Destination'].map(header => (
                         <th
                           key={header}
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
                         >
                           {header}
                         </th>
@@ -193,20 +220,19 @@ export default function DriverHistory() {
                   <tbody className="bg-white divide-y divide-gray-200">
                     {paginatedData.map((d) => (
                       <tr key={d._id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{d.plateNumber}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{formatTime(d.arrivalTime)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{formatTime(d.departureTime)}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.company}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.productType}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.dnNumber || 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className={`inline-block px-3 py-1 rounded-full text-white text-xs ${getStatus(d.arrivalTime) === 'Full Time' ? 'bg-green-500' : 'bg-yellow-500'
-                            }`}>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{d.plateNumber}</td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.name}</td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{formatTime(d.arrivalTime)}</td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{formatTime(d.departureTime)}</td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.company}</td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.product}</td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.dnNumber || 'N/A'}</td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm">
+                          <span className={`inline-block px-2 py-1 rounded-full text-white text-xs ${getStatus(d.arrivalTime) === 'Full Time' ? 'bg-green-500' : 'bg-yellow-500'}`}>
                             {getStatus(d.arrivalTime)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.destination || 'N/A'}</td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.destination || 'N/A'}</td>
                       </tr>
                     ))}
                   </tbody>

@@ -34,7 +34,14 @@ export default function Summary() {
         try {
             setLoading(true);
             const res = await axios.get('/api/drivers');
-            setDrivers(res.data);
+            // Flatten the data once
+            const flattened = res.data.map(d => ({
+                ...d,
+                company: d.companyId?.name || '',
+                truckType: d.truckTypeId?.type || '',
+                product: d.productId?.name || ''
+            }));
+            setDrivers(flattened);
         } catch (err) {
             console.error('Failed to fetch drivers:', err);
         } finally {
@@ -52,15 +59,19 @@ export default function Summary() {
 
         drivers.forEach(driver => {
             if (driver.company) companies.add(driver.company);
+
             if (driver.arrivalTime) {
                 totalArrivals++;
-                if (new Date(driver.arrivalTime).toDateString() === today) {
+                const arrivalDate = new Date(driver.arrivalTime);
+                if (!isNaN(arrivalDate) && arrivalDate.toDateString() === today) {
                     todayArrivals++;
                 }
             }
+
             if (driver.departureTime) {
                 totalDepartures++;
-                if (new Date(driver.departureTime).toDateString() === today) {
+                const departureDate = new Date(driver.departureTime);
+                if (!isNaN(departureDate) && departureDate.toDateString() === today) {
                     todayDepartures++;
                 }
             }
@@ -100,8 +111,10 @@ export default function Summary() {
             const arrivalDate = driver.arrivalTime ? new Date(driver.arrivalTime) : null;
             const departureDate = driver.departureTime ? new Date(driver.departureTime) : null;
 
-            return (arrivalDate && arrivalDate >= filterDate) ||
-                (departureDate && departureDate >= filterDate);
+            const validArrival = arrivalDate && !isNaN(arrivalDate.getTime()) && arrivalDate >= filterDate;
+            const validDeparture = departureDate && !isNaN(departureDate.getTime()) && departureDate >= filterDate;
+
+            return validArrival || validDeparture;
         });
     };
 
@@ -116,12 +129,19 @@ export default function Summary() {
 
         filteredDrivers.forEach(driver => {
             if (driver.arrivalTime) {
-                const hour = new Date(driver.arrivalTime).getHours();
-                hourlyStats[hour].arrivals++;
+                const arrivalDate = new Date(driver.arrivalTime);
+                if (!isNaN(arrivalDate)) {
+                    const hour = arrivalDate.getHours();
+                    hourlyStats[hour].arrivals++;
+                }
             }
+
             if (driver.departureTime) {
-                const hour = new Date(driver.departureTime).getHours();
-                hourlyStats[hour].departures++;
+                const departureDate = new Date(driver.departureTime);
+                if (!isNaN(departureDate)) {
+                    const hour = departureDate.getHours();
+                    hourlyStats[hour].departures++;
+                }
             }
         });
 
@@ -141,6 +161,7 @@ export default function Summary() {
                     companyStats[driver.company] = { name: driver.company, count: 0, arrivals: 0, departures: 0 };
                 }
                 companyStats[driver.company].count++;
+
                 if (driver.arrivalTime) companyStats[driver.company].arrivals++;
                 if (driver.departureTime) companyStats[driver.company].departures++;
             }
@@ -217,7 +238,6 @@ export default function Summary() {
                             </div>
                         </div>
                     </div>
-
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                         <div className="flex items-center gap-3">
                             <div className="bg-emerald-100 p-2 rounded-lg">
@@ -229,7 +249,6 @@ export default function Summary() {
                             </div>
                         </div>
                     </div>
-
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                         <div className="flex items-center gap-3">
                             <div className="bg-blue-100 p-2 rounded-lg">
@@ -241,7 +260,6 @@ export default function Summary() {
                             </div>
                         </div>
                     </div>
-
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                         <div className="flex items-center gap-3">
                             <div className="bg-purple-100 p-2 rounded-lg">
@@ -253,7 +271,6 @@ export default function Summary() {
                             </div>
                         </div>
                     </div>
-
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                         <div className="flex items-center gap-3">
                             <div className="bg-green-100 p-2 rounded-lg">
@@ -265,7 +282,6 @@ export default function Summary() {
                             </div>
                         </div>
                     </div>
-
                     <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                         <div className="flex items-center gap-3">
                             <div className="bg-amber-100 p-2 rounded-lg">
@@ -428,8 +444,7 @@ export default function Summary() {
                                                 </div>
                                                 <div>
                                                     <div className="font-medium text-slate-900">{driver.name}</div>
-                                                    <div className="text-sm text-slate-500">Age: {driver.age || 'N/A'}</div>
-                                                </div>
+                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-slate-600">{driver.company || '—'}</td>
