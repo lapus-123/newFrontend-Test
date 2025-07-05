@@ -340,12 +340,6 @@ export default function AddDriverClient() {
                             <ArrowRight className="w-4 h-4" />
                             Record Arrival
                         </button>
-                        <button
-                            onClick={ExcelExport}
-                            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
-                        >
-                            Export Excel
-                        </button>
                     </div>
                 </div>
             </div>
