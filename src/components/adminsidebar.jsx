@@ -12,7 +12,7 @@ const sidebarLinks = [
     { label: 'Add Product', iconClass: 'bx bxs-package', path: '/admin/add-product' },
 
     { type: 'section', label: 'History' },
-    { label: 'Drivers History', iconClass: 'bx bxs-user-voice', path: '/admin/drivers' },
+    { label: 'Driver and Truck History', iconClass: 'bx bxs-user-voice', path: '/admin/drivers' },
     { label: 'Companies History', iconClass: 'bx bxs-archive-in', path: '/admin/history/companies' },
 
     { type: 'section', label: 'Summary' },
