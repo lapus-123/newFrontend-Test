@@ -9,7 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from 'xlsx';
 import ConfirmationModal from '../components/ConfirmationModal';
 
-export default function AddDriversClient() {
+export default function AddDriverClient() {
     const [driversData, setDriversData] = useState([]); // From /api/drivers-data
     const [driverLogs, setDriverLogs] = useState([]);
     const [companies, setCompanies] = useState([]);
@@ -204,16 +204,20 @@ export default function AddDriversClient() {
         try {
             let res;
             if (mode === 'arrival') {
-                res = await axios.post('/api/drivers/logs', payload); // Assuming endpoint for logs
+                res = await axios.post('/api/drivers', payload); // Assuming endpoint for logs
                 setDriverLogs(prev => [res.data, ...prev]);
             } else {
-                res = await axios.put(`/api/drivers/logs/${selectedDriver._id}`, payload);
+                res = await axios.put(`/api/drivers/${selectedDriver._id}`, payload);
                 setDriverLogs(prev => prev.map(r => r._id === res.data._id ? res.data : r));
             }
             toast.success('Record saved successfully!');
             setShowModal(false);
             // Refetch data after successful update or post
-            fetchDriverLogs(); // Ensure logs are refreshed
+            // Refresh the page after a short delay to allow the modal to close smoothly
+            setTimeout(() => {
+                window.location.reload();
+            }, 300);
+
         } catch (err) {
             console.error('Submit error:', err);
             toast.error(err.response?.data?.error || 'Failed to update record.');
@@ -238,15 +242,15 @@ export default function AddDriversClient() {
         XLSX.writeFile(wb, 'DriverRecords.xlsx');
     };
 
-    const handleDelete = (id) => {
-        setDeleteId(id);
+    const handleDelete = (logId) => {
+        setDeleteId(logId);
         setShowConfirmModal(true);
     };
 
     const confirmDelete = async () => {
         if (!deleteId) return;
         try {
-            await axios.delete(`/api/drivers/logs/${deleteId}`);
+            await axios.delete(`/api/drivers/${deleteId}`); // deleteId is the log record's _id
             setDriverLogs(prev => prev.filter(r => r._id !== deleteId));
             toast.success('Record deleted successfully!');
         } catch (err) {
@@ -335,12 +339,6 @@ export default function AddDriversClient() {
                         >
                             <ArrowRight className="w-4 h-4" />
                             Record Arrival
-                        </button>
-                        <button
-                            onClick={ExcelExport}
-                            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
-                        >
-                            Export Excel
                         </button>
                     </div>
                 </div>
