@@ -688,25 +688,34 @@ export default function DriverManagement() {
                             </div>
                             {/* Modal Footer */}
                             <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 rounded-b-xl">
-                                <div className="flex gap-3 justify-end">
-                                    <button
-                                        onClick={() => setShowModal(false)}
-                                        className="px-4 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors font-medium"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button
-                                        onClick={handleSubmit}
-                                        disabled={!selectedDriver}
-                                        className={`px-6 py-2 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${mode === 'arrival' ? 'bg-emerald-600 hover:bg-emerald-700' :
-                                            mode === 'edit-full' ? 'bg-yellow-600 hover:bg-yellow-700' :
-                                                'bg-blue-600 hover:bg-blue-700'
-                                            }`}
-                                    >
-                                        Save Record
-                                    </button>
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                                    {/* Warning Message */}
+                                    <p className="text-sm text-yellow-800 bg-yellow-100 border border-yellow-300 px-3 py-2 rounded-md font-medium">
+                                        ⚠️ Double check all details before proceeding.
+                                    </p>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex gap-3 justify-end">
+                                        <button
+                                            onClick={() => setShowModal(false)}
+                                            className="px-4 py-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors font-medium"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleSubmit}
+                                            disabled={!selectedDriver}
+                                            className={`px-6 py-2 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${mode === 'arrival' ? 'bg-emerald-600 hover:bg-emerald-700' :
+                                                mode === 'edit-full' ? 'bg-yellow-600 hover:bg-yellow-700' :
+                                                    'bg-blue-600 hover:bg-blue-700'
+                                                }`}
+                                        >
+                                            Save Record
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

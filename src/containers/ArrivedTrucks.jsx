@@ -64,7 +64,8 @@ export default function ArrivedTrucks() {
         Driver: d.name,
         'Arrival Date': d.arrivalTime ? new Date(d.arrivalTime).toLocaleDateString() : 'N/A',
         'Arrival Time': d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
-        Company: d.companyId?.name || d.company || 'N/A'
+        Company: d.companyId?.name || d.company || 'N/A',
+        'Plate Number': d.plateNumber || 'N/A'
       }));
 
       const ws = XLSX.utils.json_to_sheet(exportData);
@@ -132,6 +133,7 @@ export default function ArrivedTrucks() {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Time</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plate Number #</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -145,6 +147,7 @@ export default function ArrivedTrucks() {
                           {d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.companyId?.name || d.company || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.plateNumber || 'N/A'}</td>
                       </tr>
                     ))}
                   </tbody>

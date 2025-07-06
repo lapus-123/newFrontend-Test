@@ -7,7 +7,8 @@ import {
   Truck,
   Download,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Calendar,
 } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 10;
@@ -17,6 +18,7 @@ export default function DepartedTrucks() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
+  const [filterDate, setFilterDate] = useState('all'); // all, week, month, 3days
 
   // Fetch data and filter only departed trucks
   useEffect(() => {
@@ -33,9 +35,34 @@ export default function DepartedTrucks() {
     fetchData();
   }, []);
 
-  // Filter by driver name
+  // Helper to filter by date
+  const isWithinRange = (date) => {
+    const now = new Date();
+    const itemDate = new Date(date);
+
+    switch (filterDate) {
+      case 'week': {
+        const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return itemDate >= lastWeek;
+      }
+      case '3days': {
+        const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+        return itemDate >= threeDaysAgo;
+      }
+      case 'month': {
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        return itemDate >= startOfMonth;
+      }
+      default:
+        return true;
+    }
+  };
+
+  // Filter by driver name and date
   const filteredData = drivers.filter(
-    (d) => d.name?.toLowerCase().includes(search.toLowerCase())
+    (d) =>
+      d.name?.toLowerCase().includes(search.toLowerCase()) &&
+      isWithinRange(d.departureTime)
   );
 
   // Pagination logic
@@ -52,6 +79,8 @@ export default function DepartedTrucks() {
     setTimeout(() => {
       const exportData = filteredData.map((d) => ({
         Driver: d.name,
+        Company: d.companyId?.name || 'N/A',
+        Plate: d.plateNumber || 'N/A',
         'Departure Date': d.departureTime ? new Date(d.departureTime).toLocaleDateString() : 'N/A',
         'Departure Time': d.departureTime ? new Date(d.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
         'DN Number': d.dnNumber || 'N/A'
@@ -86,6 +115,16 @@ export default function DepartedTrucks() {
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
+          <select
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            <option value="all">All Dates</option>
+            <option value="3days">Last 3 Days</option>
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+          </select>
           <button
             onClick={handleDownload}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-transform transform hover:scale-105"
@@ -107,7 +146,7 @@ export default function DepartedTrucks() {
           <div className="bg-white rounded-xl shadow-md p-10 text-center">
             <Truck className="mx-auto w-12 h-12 text-gray-300" />
             <h3 className="mt-4 text-lg font-medium text-gray-700">No departed trucks found</h3>
-            <p className="text-sm text-gray-500 mt-1">Try adjusting your search.</p>
+            <p className="text-sm text-gray-500 mt-1">Try adjusting filters or search.</p>
           </div>
         ) : (
           <>
@@ -118,6 +157,8 @@ export default function DepartedTrucks() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plate Number#</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure Time</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DN Number</th>
@@ -127,6 +168,8 @@ export default function DepartedTrucks() {
                     {paginatedData.map((d) => (
                       <tr key={d._id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.companyId?.name || 'N/A'}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.plateNumber || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                           {d.departureTime ? new Date(d.departureTime).toLocaleDateString() : 'N/A'}
                         </td>
