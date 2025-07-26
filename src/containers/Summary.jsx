@@ -151,24 +151,7 @@ export default function Summary() {
         }));
     };
 
-    const getCompanyData = () => {
-        const companyStats = {};
-        const filteredDrivers = getFilteredDrivers();
 
-        filteredDrivers.forEach(driver => {
-            if (driver.company) {
-                if (!companyStats[driver.company]) {
-                    companyStats[driver.company] = { name: driver.company, count: 0, arrivals: 0, departures: 0 };
-                }
-                companyStats[driver.company].count++;
-
-                if (driver.arrivalTime) companyStats[driver.company].arrivals++;
-                if (driver.departureTime) companyStats[driver.company].departures++;
-            }
-        });
-
-        return Object.values(companyStats);
-    };
 
     const getTruckTypeData = () => {
         const truckStats = {};
@@ -378,42 +361,7 @@ export default function Summary() {
                     </div>
                 </div>
 
-                {/* Company Performance Chart */}
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                    <div className="flex items-center gap-2 mb-6">
-                        <Building2 className="w-5 h-5 text-slate-600" />
-                        <h3 className="text-lg font-semibold text-slate-900">Company Performance</h3>
-                    </div>
-                    <div className="h-80">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={getCompanyData()}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                                <XAxis
-                                    dataKey="name"
-                                    stroke="#64748b"
-                                    fontSize={12}
-                                    tickLine={false}
-                                />
-                                <YAxis
-                                    stroke="#64748b"
-                                    fontSize={12}
-                                    tickLine={false}
-                                    axisLine={false}
-                                />
-                                <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'white',
-                                        border: '1px solid #e2e8f0',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                                    }}
-                                />
-                                <Bar dataKey="arrivals" fill="#10b981" name="Arrivals" />
-                                <Bar dataKey="departures" fill="#3b82f6" name="Departures" />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
+
 
                 {/* Detailed Data Table */}
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200">
@@ -444,7 +392,7 @@ export default function Summary() {
                                                 </div>
                                                 <div>
                                                     <div className="font-medium text-slate-900">{driver.name}</div>
-                                                 </div>
+                                                </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-slate-600">{driver.company || '—'}</td>

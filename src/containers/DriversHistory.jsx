@@ -32,9 +32,11 @@ export default function DriverHistory() {
         const driverList = res.data.map((d) => ({
           ...d,
           company: d.companyId?.name || 'N/A',
-          product: d.productId?.name || 'N/A',
+          truckType: d.truckTypeId?.type || 'N/A',
+          products: d.products?.length > 0
+            ? d.products.map(p => p.productId?.name).join(', ')
+            : 'N/A',
         }));
-
         setDrivers(driverList);
 
         // Extract unique companies
@@ -44,18 +46,15 @@ export default function DriverHistory() {
         console.error('Failed to fetch drivers:', err.message);
       }
     }
-
     fetchData();
   }, []);
 
   // Helper: Get status based on time
   const getStatus = (arrivalTime) => {
     if (!arrivalTime) return 'N/A';
-
     const date = new Date(arrivalTime);
     const cutoff = new Date(date);
     cutoff.setHours(15, 0, 0); // 3:00 PM
-
     return date <= cutoff ? 'Full Time' : 'Overtime';
   };
 
@@ -84,11 +83,10 @@ export default function DriverHistory() {
       !searchTerm ||
       d.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       d.plateNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.truckTypeId?.type?.toLowerCase().includes(searchTerm.toLowerCase());
+      d.truckType?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCompany = selectedCompany === 'All' || d.company === selectedCompany;
     const matchesDate = !filterDate || formatDate(d.arrivalTime) === filterDate;
-
     return matchesSearch && matchesCompany && matchesDate;
   });
 
@@ -101,7 +99,6 @@ export default function DriverHistory() {
   // Export to Excel
   const exportToExcel = () => {
     setShowDownloadPopup(true);
-
     setTimeout(() => {
       const excelData = filteredData.map((d) => ({
         'Truck Number': d.plateNumber,
@@ -109,20 +106,17 @@ export default function DriverHistory() {
         'Arrival Time': d.arrivalTime ? formatTime(d.arrivalTime) : 'N/A',
         'Departure Time': d.departureTime ? formatTime(d.departureTime) : 'N/A',
         'Company': d.company,
-        'Product Type': d.product,
+        'Products': d.products,
         'DN Number': d.dnNumber || 'N/A',
         'Status': getStatus(d.arrivalTime),
         'Destination': d.destination || 'N/A'
       }));
-
       const ws = XLSX.utils.json_to_sheet(excelData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Driver History');
-
       const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
       saveAs(blob, 'Driver_History.xlsx');
-
       setShowDownloadPopup(false);
     }, 1000);
   };
@@ -131,7 +125,6 @@ export default function DriverHistory() {
     <div className="min-h-screen bg-gray-100 p-6">
       <ToastContainer />
       <div className="max-w-7xl mx-auto">
-
         {/* Header */}
         <h1 className="text-3xl font-bold text-blue-600 mb-6">Driver History</h1>
 
@@ -150,7 +143,6 @@ export default function DriverHistory() {
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
-
           <select
             value={selectedCompany}
             onChange={(e) => {
@@ -163,7 +155,6 @@ export default function DriverHistory() {
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
-
           <div className="flex items-center gap-2 border rounded px-3 py-1">
             <Calendar size={18} className="text-gray-500" />
             <input
@@ -176,7 +167,6 @@ export default function DriverHistory() {
               className="border-none focus:outline-none"
             />
           </div>
-
           <button
             onClick={exportToExcel}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-transform transform hover:scale-105"
@@ -207,7 +197,14 @@ export default function DriverHistory() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      {['Plate Number #', 'Driver', 'Arrival', 'Departure', 'Company', 'Product', 'DN #', 'Status', 'Destination'].map(header => (
+                      {[
+                        'Plate Number #',
+                        'Driver',
+                        'Arrival',
+                        'Departure',
+                        'Company',
+                        'Status',
+                      ].map((header) => (
                         <th
                           key={header}
                           className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
@@ -224,11 +221,13 @@ export default function DriverHistory() {
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.name}</td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{formatTime(d.arrivalTime)}</td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{formatTime(d.departureTime)}</td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.company}</td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.product}</td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.dnNumber || 'N/A'}</td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm">
-                          <span className={`inline-block px-2 py-1 rounded-full text-white text-xs ${getStatus(d.arrivalTime) === 'Full Time' ? 'bg-green-500' : 'bg-yellow-500'}`}>
+                          <span
+                            className={`inline-block px-2 py-1 rounded-full text-white text-xs ${getStatus(d.arrivalTime) === 'Full Time'
+                              ? 'bg-green-500'
+                              : 'bg-yellow-500'
+                              }`}
+                          >
                             {getStatus(d.arrivalTime)}
                           </span>
                         </td>
@@ -243,7 +242,7 @@ export default function DriverHistory() {
             {/* Pagination */}
             <div className="flex items-center justify-between mt-6">
               <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === 1
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -258,7 +257,7 @@ export default function DriverHistory() {
                 <span className="font-semibold">{totalPages}</span>
               </span>
               <button
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
                 className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === totalPages
                   ? 'bg-gray-200 text-gray-400 cursor-not-allowed'

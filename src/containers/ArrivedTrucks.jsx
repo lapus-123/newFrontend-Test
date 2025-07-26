@@ -7,7 +7,9 @@ import {
   Truck,
   Download,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Calendar,
+  X
 } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 10;
@@ -18,6 +20,32 @@ export default function ArrivedTrucks() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
+
+  // Date filters
+  const [filterDate, setFilterDate] = useState('');
+  const [filterMonth, setFilterMonth] = useState('');
+  const [filterYear, setFilterYear] = useState('');
+
+  // Month options
+  const months = [
+    { value: '', label: 'All Months' },
+    { value: '1', label: 'January' },
+    { value: '2', label: 'February' },
+    { value: '3', label: 'March' },
+    { value: '4', label: 'April' },
+    { value: '5', label: 'May' },
+    { value: '6', label: 'June' },
+    { value: '7', label: 'July' },
+    { value: '8', label: 'August' },
+    { value: '9', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ];
+
+  // Year options (last 10 years including current)
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 10 }, (_, i) => currentYear - 5 + i);
 
   // Fetch data and filter only arrived trucks
   useEffect(() => {
@@ -31,22 +59,54 @@ export default function ArrivedTrucks() {
         console.error('Failed to fetch drivers:', err.message);
       }
     }
-
     fetchData();
   }, []);
 
-  // Handle search input
+  // Apply filters
   useEffect(() => {
+    let result = [...drivers];
+
+    // Apply search
     const term = search.trim().toLowerCase();
-    if (!term) {
-      setFilteredData(drivers);
-    } else {
-      setFilteredData(
-        drivers.filter(d => d.name?.toLowerCase().includes(term))
+    if (term) {
+      result = result.filter(d =>
+        d.name?.toLowerCase().includes(term) ||
+        d.haulerId?.name?.toLowerCase().includes(term)
       );
     }
-    setPage(1);
-  }, [search, drivers]);
+
+    // Apply date filter
+    if (filterDate) {
+      const selectedDate = new Date(filterDate);
+      selectedDate.setHours(0, 0, 0, 0);
+      result = result.filter(d => {
+        const createdAt = new Date(d.createdAt);
+        createdAt.setHours(0, 0, 0, 0);
+        return createdAt.getTime() === selectedDate.getTime();
+      });
+    }
+
+    // Apply month filter
+    if (filterMonth) {
+      const month = parseInt(filterMonth);
+      result = result.filter(d => {
+        const createdAt = new Date(d.createdAt);
+        return createdAt.getMonth() + 1 === month;
+      });
+    }
+
+    // Apply year filter
+    if (filterYear) {
+      const year = parseInt(filterYear);
+      result = result.filter(d => {
+        const createdAt = new Date(d.createdAt);
+        return createdAt.getFullYear() === year;
+      });
+    }
+
+    setFilteredData(result);
+    setPage(1); // Reset pagination
+  }, [search, drivers, filterDate, filterMonth, filterYear]);
 
   // Pagination
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
@@ -58,25 +118,32 @@ export default function ArrivedTrucks() {
   // Export to Excel
   const handleDownload = () => {
     setShowDownloadPopup(true);
-
     setTimeout(() => {
       const exportData = filteredData.map((d) => ({
         Driver: d.name,
+        Hauler: d.haulerId?.name || 'N/A',
         'Arrival Date': d.arrivalTime ? new Date(d.arrivalTime).toLocaleDateString() : 'N/A',
-        'Arrival Time': d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+          'Arrival Time': d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
         Company: d.companyId?.name || d.company || 'N/A',
-        'Plate Number': d.plateNumber || 'N/A'
+        'Plate Number': d.plateNumber || 'N/A',
+        'Created At': d.createdAt ? new Date(d.createdAt).toLocaleDateString() : 'N/A'
       }));
-
       const ws = XLSX.utils.json_to_sheet(exportData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Arrived Trucks');
-
       const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
       saveAs(blob, 'ArrivedTrucks.xlsx');
       setShowDownloadPopup(false);
     }, 1000);
+  };
+
+  // Reset filters
+  const resetFilters = () => {
+    setFilterDate('');
+    setFilterMonth('');
+    setFilterYear('');
+    setSearch('');
   };
 
   return (
@@ -86,16 +153,57 @@ export default function ArrivedTrucks() {
 
         {/* Filters */}
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-center">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="relative flex-grow w-full sm:w-auto">
               <input
                 type="text"
-                placeholder="Search by Driver"
+                placeholder="Search by Driver or Hauler"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
               />
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Select Date</label>
+                <input
+                  type="date"
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                  className="px-2 py-1 text-sm border border-gray-300 rounded"
+                />
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Select Month</label>
+                <select
+                  value={filterMonth}
+                  onChange={(e) => setFilterMonth(e.target.value)}
+                  className="px-2 py-1 text-sm border border-gray-300 rounded"
+                >
+                  {months.map(m => (
+                    <option key={m.value} value={m.value}>{m.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-gray-500 mb-1">Select Year</label>
+                <select
+                  value={filterYear}
+                  onChange={(e) => setFilterYear(e.target.value)}
+                  className="px-2 py-1 text-sm border border-gray-300 rounded"
+                >
+                  {years.map(y => (
+                    <option key={y} value={y}>{y}</option>
+                  ))}
+                </select>
+              </div>
+              <button
+                onClick={resetFilters}
+                className="mt-6 px-3 py-2 text-sm bg-red-100 text-red-600 hover:bg-red-200 rounded transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
             <button
               onClick={handleDownload}
@@ -119,7 +227,7 @@ export default function ArrivedTrucks() {
           <div className="bg-white rounded-xl shadow-md p-10 text-center">
             <Truck className="mx-auto w-12 h-12 text-gray-300" />
             <h3 className="mt-4 text-lg font-medium text-gray-700">No arrived trucks found</h3>
-            <p className="text-sm text-gray-500 mt-1">Try adjusting your search.</p>
+            <p className="text-sm text-gray-500 mt-1">Try adjusting your search or filters.</p>
           </div>
         ) : (
           <>
@@ -130,6 +238,7 @@ export default function ArrivedTrucks() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hauler</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival Time</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
@@ -140,6 +249,7 @@ export default function ArrivedTrucks() {
                     {paginatedData.map((d) => (
                       <tr key={d._id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{d.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.haulerId?.name || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                           {d.arrivalTime ? new Date(d.arrivalTime).toLocaleDateString() : 'N/A'}
                         </td>

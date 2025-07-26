@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar,
+  X
 } from 'lucide-react';
 
 const ITEMS_PER_PAGE = 10;
@@ -18,7 +19,32 @@ export default function DepartedTrucks() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
-  const [filterDate, setFilterDate] = useState('all'); // all, week, month, 3days
+
+  // Date Filters
+  const [filterSingleDate, setFilterSingleDate] = useState('');
+  const [filterMonth, setFilterMonth] = useState('');
+  const [filterYear, setFilterYear] = useState('');
+
+  // Month options
+  const months = [
+    { value: '', label: 'All Months' },
+    { value: '1', label: 'January' },
+    { value: '2', label: 'February' },
+    { value: '3', label: 'March' },
+    { value: '4', label: 'April' },
+    { value: '5', label: 'May' },
+    { value: '6', label: 'June' },
+    { value: '7', label: 'July' },
+    { value: '8', label: 'August' },
+    { value: '9', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' }
+  ];
+
+  // Year options
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 10 }, (_, i) => currentYear - 5 + i);
 
   // Fetch data and filter only departed trucks
   useEffect(() => {
@@ -31,39 +57,44 @@ export default function DepartedTrucks() {
         console.error('Failed to fetch drivers:', err.message);
       }
     }
-
     fetchData();
   }, []);
 
-  // Helper to filter by date
-  const isWithinRange = (date) => {
-    const now = new Date();
-    const itemDate = new Date(date);
+  // Filter by name, date, month, year, and hauler
+  const filteredData = drivers.filter(d => {
+    const departureDate = d.departureTime ? new Date(d.departureTime) : null;
+    if (!departureDate || isNaN(departureDate.getTime())) return false;
 
-    switch (filterDate) {
-      case 'week': {
-        const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        return itemDate >= lastWeek;
-      }
-      case '3days': {
-        const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
-        return itemDate >= threeDaysAgo;
-      }
-      case 'month': {
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        return itemDate >= startOfMonth;
-      }
-      default:
-        return true;
+    let match = true;
+
+    // Apply search (now includes hauler)
+    if (search.trim()) {
+      const term = search.toLowerCase();
+      match = d.name?.toLowerCase().includes(term) || d.haulerId?.name?.toLowerCase().includes(term);
     }
-  };
+    // Apply single date filter
+    if (filterSingleDate) {
+      const selectedDate = new Date(filterSingleDate);
+      selectedDate.setHours(0, 0, 0, 0);
+      const itemDate = new Date(departureDate);
+      itemDate.setHours(0, 0, 0, 0);
+      match = match && itemDate.getTime() === selectedDate.getTime();
+    }
 
-  // Filter by driver name and date
-  const filteredData = drivers.filter(
-    (d) =>
-      d.name?.toLowerCase().includes(search.toLowerCase()) &&
-      isWithinRange(d.departureTime)
-  );
+    // Apply month filter
+    if (filterMonth) {
+      const month = parseInt(filterMonth);
+      match = match && departureDate.getMonth() + 1 === month;
+    }
+
+    // Apply year filter
+    if (filterYear) {
+      const year = parseInt(filterYear);
+      match = match && departureDate.getFullYear() === year;
+    }
+
+    return match;
+  });
 
   // Pagination logic
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
@@ -72,28 +103,34 @@ export default function DepartedTrucks() {
     page * ITEMS_PER_PAGE
   );
 
+  // Reset all filters
+  const resetFilters = () => {
+    setFilterSingleDate('');
+    setFilterMonth('');
+    setFilterYear('');
+    setSearch('');
+    setPage(1);
+  };
+
   // Export to Excel
   const handleDownload = () => {
     setShowDownloadPopup(true);
-
     setTimeout(() => {
       const exportData = filteredData.map((d) => ({
         Driver: d.name,
+        Hauler: d.haulerId?.name || 'N/A',
         Company: d.companyId?.name || 'N/A',
         Plate: d.plateNumber || 'N/A',
         'Departure Date': d.departureTime ? new Date(d.departureTime).toLocaleDateString() : 'N/A',
         'Departure Time': d.departureTime ? new Date(d.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
         'DN Number': d.dnNumber || 'N/A'
       }));
-
       const ws = XLSX.utils.json_to_sheet(exportData);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Departed Trucks');
-
       const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
       const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
       saveAs(blob, 'DepartedTrucks.xlsx');
-
       setShowDownloadPopup(false);
     }, 1000);
   };
@@ -108,23 +145,54 @@ export default function DepartedTrucks() {
           <div className="relative w-full sm:w-64">
             <input
               type="text"
-              placeholder="Search by Driver"
+              placeholder="Search by Driver or Hauler"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
           </div>
-          <select
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-          >
-            <option value="all">All Dates</option>
-            <option value="3days">Last 3 Days</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-          </select>
+          <div className="flex flex-wrap items-center gap-3">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Select Date</label>
+              <input
+                type="date"
+                value={filterSingleDate}
+                onChange={(e) => setFilterSingleDate(e.target.value)}
+                className="px-2 py-1 text-sm border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Select Month</label>
+              <select
+                value={filterMonth}
+                onChange={(e) => setFilterMonth(e.target.value)}
+                className="px-2 py-1 text-sm border border-gray-300 rounded"
+              >
+                {months.map(m => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Select Year</label>
+              <select
+                value={filterYear}
+                onChange={(e) => setFilterYear(e.target.value)}
+                className="px-2 py-1 text-sm border border-gray-300 rounded"
+              >
+                {years.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
+            <button
+              onClick={resetFilters}
+              className="mt-6 px-3 py-2 text-sm bg-red-100 text-red-600 hover:bg-red-200 rounded transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
           <button
             onClick={handleDownload}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-transform transform hover:scale-105"
@@ -157,6 +225,7 @@ export default function DepartedTrucks() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hauler</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plate Number#</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure Date</th>
@@ -168,6 +237,7 @@ export default function DepartedTrucks() {
                     {paginatedData.map((d) => (
                       <tr key={d._id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.haulerId?.name || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.companyId?.name || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.plateNumber || 'N/A'}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">

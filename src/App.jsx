@@ -21,7 +21,7 @@ import CompaniesHistory from './containers/CompaniesHistory';
 import Summary from './containers/Summary';
 import AddDriverClient from './containers/AddDriversClient';
 import DriverManagement from './containers/DriverManagement';
-
+import AddHauler from './containers/AddHauler';
 // Client Pages
 import ClientDashboard from './containers/Client/ClientDashboard';
 
@@ -53,6 +53,7 @@ export default function App() {
           <Route index element={<DriverManagement />} />
           <Route path="home" element={<Home />} />
           <Route path="add-driver" element={<AddDriver />} />
+          <Route path="add-hauler" element={<AddHauler />} />
           <Route path="add-company" element={<AddCompany />} />
           <Route path="add-truck-type" element={<AddTruckType />} />
           <Route path="add-product" element={<AddProduct />} />
