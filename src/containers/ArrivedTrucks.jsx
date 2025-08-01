@@ -8,7 +8,6 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
-  Calendar,
   X
 } from 'lucide-react';
 
@@ -21,10 +20,12 @@ export default function ArrivedTrucks() {
   const [page, setPage] = useState(1);
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
 
-  // Date filters
+  // Date and time filters
   const [filterDate, setFilterDate] = useState('');
   const [filterMonth, setFilterMonth] = useState('');
   const [filterYear, setFilterYear] = useState('');
+  const [fromTime, setFromTime] = useState('');
+  const [toTime, setToTime] = useState('');
 
   // Month options
   const months = [
@@ -80,9 +81,10 @@ export default function ArrivedTrucks() {
       const selectedDate = new Date(filterDate);
       selectedDate.setHours(0, 0, 0, 0);
       result = result.filter(d => {
-        const createdAt = new Date(d.createdAt);
-        createdAt.setHours(0, 0, 0, 0);
-        return createdAt.getTime() === selectedDate.getTime();
+        if (!d.arrivalTime) return false;
+        const arrivalDate = new Date(d.arrivalTime);
+        arrivalDate.setHours(0, 0, 0, 0);
+        return arrivalDate.getTime() === selectedDate.getTime();
       });
     }
 
@@ -90,8 +92,9 @@ export default function ArrivedTrucks() {
     if (filterMonth) {
       const month = parseInt(filterMonth);
       result = result.filter(d => {
-        const createdAt = new Date(d.createdAt);
-        return createdAt.getMonth() + 1 === month;
+        if (!d.arrivalTime) return false;
+        const arrivalDate = new Date(d.arrivalTime);
+        return arrivalDate.getMonth() + 1 === month;
       });
     }
 
@@ -99,14 +102,60 @@ export default function ArrivedTrucks() {
     if (filterYear) {
       const year = parseInt(filterYear);
       result = result.filter(d => {
-        const createdAt = new Date(d.createdAt);
-        return createdAt.getFullYear() === year;
+        if (!d.arrivalTime) return false;
+        const arrivalDate = new Date(d.arrivalTime);
+        return arrivalDate.getFullYear() === year;
+      });
+    }
+
+    // Apply time filters (only if date is selected)
+    if (filterDate && (fromTime || toTime)) {
+      result = result.filter(d => {
+        if (!d.arrivalTime) return false;
+
+        const arrival = new Date(d.arrivalTime);
+        const selectedDate = new Date(filterDate);
+
+        // Check if arrival date matches the selected date
+        const arrivalDateOnly = new Date(arrival);
+        arrivalDateOnly.setHours(0, 0, 0, 0);
+        const selectedDateOnly = new Date(selectedDate);
+        selectedDateOnly.setHours(0, 0, 0, 0);
+
+        if (arrivalDateOnly.getTime() !== selectedDateOnly.getTime()) {
+          return false;
+        }
+
+        // Extract hours and minutes from arrival time
+        const arrivalHours = arrival.getHours();
+        const arrivalMinutes = arrival.getMinutes();
+        const arrivalTimeInMinutes = arrivalHours * 60 + arrivalMinutes;
+
+        // Check from time
+        if (fromTime) {
+          const [fromHour, fromMinute] = fromTime.split(':').map(Number);
+          const fromTimeInMinutes = fromHour * 60 + fromMinute;
+          if (arrivalTimeInMinutes < fromTimeInMinutes) {
+            return false;
+          }
+        }
+
+        // Check to time
+        if (toTime) {
+          const [toHour, toMinute] = toTime.split(':').map(Number);
+          const toTimeInMinutes = toHour * 60 + toMinute;
+          if (arrivalTimeInMinutes > toTimeInMinutes) {
+            return false;
+          }
+        }
+
+        return true;
       });
     }
 
     setFilteredData(result);
     setPage(1); // Reset pagination
-  }, [search, drivers, filterDate, filterMonth, filterYear]);
+  }, [search, drivers, filterDate, filterMonth, filterYear, fromTime, toTime]);
 
   // Pagination
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
@@ -123,7 +172,7 @@ export default function ArrivedTrucks() {
         Driver: d.name,
         Hauler: d.haulerId?.name || 'N/A',
         'Arrival Date': d.arrivalTime ? new Date(d.arrivalTime).toLocaleDateString() : 'N/A',
-          'Arrival Time': d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+        'Arrival Time': d.arrivalTime ? new Date(d.arrivalTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
         Company: d.companyId?.name || d.company || 'N/A',
         'Plate Number': d.plateNumber || 'N/A',
         'Created At': d.createdAt ? new Date(d.createdAt).toLocaleDateString() : 'N/A'
@@ -144,6 +193,8 @@ export default function ArrivedTrucks() {
     setFilterMonth('');
     setFilterYear('');
     setSearch('');
+    setFromTime('');
+    setToTime('');
   };
 
   return (
@@ -170,10 +221,42 @@ export default function ArrivedTrucks() {
                 <input
                   type="date"
                   value={filterDate}
-                  onChange={(e) => setFilterDate(e.target.value)}
+                  onChange={(e) => {
+                    setFilterDate(e.target.value);
+                    // Reset time filters when date changes
+                    if (!e.target.value) {
+                      setFromTime('');
+                      setToTime('');
+                    }
+                  }}
                   className="px-2 py-1 text-sm border border-gray-300 rounded"
                 />
               </div>
+
+              {/* Time Filters - Only show when date is selected */}
+              {filterDate && (
+                <>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">From Time</label>
+                    <input
+                      type="time"
+                      value={fromTime}
+                      onChange={(e) => setFromTime(e.target.value)}
+                      className="px-2 py-1 text-sm border border-gray-300 rounded"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 mb-1">To Time</label>
+                    <input
+                      type="time"
+                      value={toTime}
+                      onChange={(e) => setToTime(e.target.value)}
+                      className="px-2 py-1 text-sm border border-gray-300 rounded"
+                    />
+                  </div>
+                </>
+              )}
+
               <div>
                 <label className="block text-xs text-gray-500 mb-1">Select Month</label>
                 <select
@@ -201,6 +284,7 @@ export default function ArrivedTrucks() {
               <button
                 onClick={resetFilters}
                 className="mt-6 px-3 py-2 text-sm bg-red-100 text-red-600 hover:bg-red-200 rounded transition-colors"
+                title="Reset all filters"
               >
                 <X className="w-4 h-4" />
               </button>
