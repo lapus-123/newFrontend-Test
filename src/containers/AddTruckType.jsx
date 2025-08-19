@@ -123,112 +123,138 @@ export default function AddTruckType() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+  <div className="bg-slate-50">
       <ToastContainer />
-      <div className="max-w-6xl mx-auto mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          Manage Truck Types
-        </h1>
-        <p className="text-gray-600 mt-1">Add, view, edit or delete truck types</p>
+      {/* Header */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">
+          <div>
+            <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Manage Truck Types</h1>
+            <p className="text-slate-600 mt-0 text-[10px] sm:text-xs md:text-sm">Add, view, edit or delete truck types</p>
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                setFormData({ type: '' });
+                setEditId(null);
+                setIsModalOpen(true);
+              }}
+              className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs md:text-sm min-w-[70px]"
+            >
+              <Plus className="w-3 h-3" /> <span>Add Type</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
-        <div className="relative w-full sm:w-1/3">
+      {/* Search Filter */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 my-1 sm:my-2 p-1 sm:p-1 md:p-2">
+        <div className="relative w-full md:w-1/2">
+          <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Search</label>
           <input
             type="text"
             placeholder="Search by type..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 pl-10 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
           />
-          <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
         </div>
-
-        <button
-          onClick={() => {
-            setFormData({ type: '' });
-            setEditId(null);
-            setIsModalOpen(true);
-          }}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl font-semibold shadow-md flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5" /> Add Type
-        </button>
       </div>
 
-      {/* Table */}
-      <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-md overflow-x-auto">
-        <table className="min-w-full table-auto text-left">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-3">ID</th>
-              <th className="px-6 py-3">Type</th>
-              <th className="px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filtered.length > 0 ? (
-              filtered.map(t => (
-                <tr key={t._id}>
-                  <td className="px-6 py-4">{t._id}</td>
-                  <td className="px-6 py-4">{t.type}</td>
-                  <td className="px-6 py-4 space-x-2">
-                    <button
-                      onClick={() => editType(t._id)}
-                      className="text-blue-600 flex items-center gap-1"
-                    >
-                      <Edit className="w-5 h-5" />
-                      <span>Edit</span>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(t._id, t.type)}
-                      className="text-red-600 flex items-center gap-1"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                      <span>Delete</span>
-                    </button>
-                  </td>
+      {/* Types Table */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+        <div className="px-1 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2 border-b border-slate-200">
+          <h2 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900">Truck Types List</h2>
+        </div>
+        <div className="border-t border-slate-200">
+          <div style={{ maxHeight: 'calc(100vh - 250px)', overflowY: 'scroll', overflowX: 'scroll' }}>
+            <table className="w-full min-w-[700px] text-[10px] sm:text-xs md:text-sm">
+              <thead className="bg-slate-50 border-b border-slate-500 sticky top-0 z-10">
+                <tr>
+                  <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">ID</th>
+                  <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Type</th>
+                  <th className="text-right px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3" className="text-center py-8 text-gray-500">
-                  No truck types found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {filtered.length > 0 ? (
+                  filtered.map(t => (
+                    <tr key={t._id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">{t._id}</td>
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">{t.type}</td>
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 whitespace-nowrap text-right text-[10px] sm:text-xs md:text-sm font-medium space-x-0.5 sm:space-x-1">
+                        <button
+                          onClick={() => editType(t._id)}
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-1 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 rounded-md shadow transition duration-200 ease-in-out text-[10px] sm:text-xs md:text-sm min-w-[55px]"
+                        >
+                          <Edit className="w-3 h-3 inline-block mr-0.5" /> <span className="hidden xs:inline sm:inline">Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(t._id, t.type)}
+                          className="bg-red-600 hover:bg-red-700 text-white font-semibold px-1 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 rounded-md shadow transition duration-200 ease-in-out text-[10px] sm:text-xs md:text-sm min-w-[55px]"
+                        >
+                          <span className="hidden xs:inline sm:inline">Del</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="px-1 sm:px-1 md:px-2 py-2 sm:py-4 md:py-6 text-center">
+                      <div className="flex flex-col items-center gap-0.5 sm:gap-1">
+                        <div className="bg-slate-100 p-0.5 sm:p-1 md:p-2 rounded-full">
+                          <Plus className="w-4 h-4 text-slate-400" />
+                        </div>
+                        <p className="text-slate-500 font-medium text-[10px] sm:text-xs md:text-sm">No truck types found</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {/* Modal Form */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-2xl shadow-xl max-w-2xl w-full">
-            <h2 className="text-xl font-bold mb-4">{editId ? 'Edit Truck Type' : 'Add Truck Type'}</h2>
-            <form onSubmit={handleAddOrUpdate}>
-              <label className="text-sm font-semibold text-gray-700">Truck Type</label>
-              <input
-                type="text"
-                name="type"
-                value={formData.type}
-                onChange={handleInputChange}
-                className="w-full mt-2 mb-4 px-4 py-2 rounded-xl border border-gray-300 focus:ring-blue-500 focus:outline-none"
-                placeholder="Enter truck type"
-              />
-              <div className="flex justify-end gap-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-xl">
+            <div className="p-1 sm:p-2 md:p-3 border-b border-slate-200">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">
+                {editId ? 'Edit Truck Type' : 'Add Truck Type'}
+              </h2>
+            </div>
+            <form onSubmit={handleAddOrUpdate} className="p-1 sm:p-2 md:p-3 space-y-2">
+              <div>
+                <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">
+                  <div className="flex items-center gap-0.5 sm:gap-1">
+                    <Plus className="w-3 h-3 text-emerald-500" />
+                    Truck Type
+                  </div>
+                </label>
+                <input
+                  type="text"
+                  name="type"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                  placeholder="Enter truck type"
+                  className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+                />
+              </div>
+              <div className="flex justify-end gap-1 pt-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="text-gray-600"
+                  className="px-1 py-0.5 sm:px-2 sm:py-1 text-slate-600 hover:text-slate-900 text-[10px] sm:text-xs"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-semibold"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 rounded-md font-semibold shadow transition duration-200 ease-in-out text-[10px] sm:text-xs"
                 >
-                  {editId ? 'Update' : 'Add'}
+                  {editId ? 'Update Type' : 'Add Type'}
                 </button>
               </div>
             </form>
@@ -238,23 +264,27 @@ export default function AddTruckType() {
 
       {/* Confirmation Modal */}
       {confirmModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full">
-            <h3 className="text-lg font-bold mb-4">Confirmation</h3>
-            <p className="mb-6">{confirmModal.message}</p>
-            <div className="flex justify-end gap-4">
-              <button
-                className="text-gray-600"
-                onClick={() => setConfirmModal(prev => ({ ...prev, open: false }))}
-              >
-                Cancel
-              </button>
-              <button
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-semibold"
-                onClick={confirmModal.onConfirm}
-              >
-                Confirm
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-xl">
+            <div className="p-1 sm:p-2 md:p-3 border-b border-slate-200">
+              <h3 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Confirmation</h3>
+            </div>
+            <div className="p-1 sm:p-2 md:p-3 space-y-2">
+              <p className="text-[10px] sm:text-xs md:text-sm text-slate-600">{confirmModal.message}</p>
+              <div className="flex justify-end gap-1 pt-2 border-t border-slate-200">
+                <button
+                  className="px-1 py-0.5 sm:px-2 sm:py-1 text-slate-600 hover:text-slate-900 text-[10px] sm:text-xs"
+                  onClick={() => setConfirmModal(prev => ({ ...prev, open: false }))}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 rounded-md font-semibold shadow transition duration-200 ease-in-out text-[10px] sm:text-xs"
+                  onClick={confirmModal.onConfirm}
+                >
+                  Confirm
+                </button>
+              </div>
             </div>
           </div>
         </div>

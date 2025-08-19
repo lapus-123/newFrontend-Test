@@ -8,12 +8,8 @@ import {
   Search,
   Truck,
   Download,
-  ChevronLeft,
-  ChevronRight,
   Calendar
 } from 'lucide-react';
-
-const ITEMS_PER_PAGE = 10;
 
 export default function DriverHistory() {
   const [drivers, setDrivers] = useState([]);
@@ -21,7 +17,6 @@ export default function DriverHistory() {
   const [selectedCompany, setSelectedCompany] = useState('All');
   const [companies, setCompanies] = useState(['All']);
   const [filterDate, setFilterDate] = useState('');
-  const [page, setPage] = useState(1);
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
 
   // Load all drivers
@@ -90,12 +85,6 @@ export default function DriverHistory() {
     return matchesSearch && matchesCompany && matchesDate;
   });
 
-  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
-  const paginatedData = filteredData.slice(
-    (page - 1) * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE
-  );
-
   // Export to Excel
   const exportToExcel = () => {
     setShowDownloadPopup(true);
@@ -122,58 +111,65 @@ export default function DriverHistory() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="bg-slate-50">
       <ToastContainer />
-      <div className="max-w-7xl mx-auto">
+      <div className="mx-auto">
         {/* Header */}
-        <h1 className="text-3xl font-bold text-blue-600 mb-6">Driver History</h1>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">
+            <div>
+              <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Driver History</h1>
+              <p className="text-slate-600 mt-0 text-[10px] sm:text-xs md:text-sm">View and track driver records</p>
+            </div>
+            <div>
+              <button
+                onClick={exportToExcel}
+                className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs md:text-sm min-w-[70px]"
+              >
+                <Download className="w-3 h-3" /> <span>Export Excel</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full sm:w-64">
-            <input
-              type="text"
-              placeholder="Search by Name, Plate, or Truck"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setPage(1);
-              }}
-              className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 my-1 sm:my-2 p-1 sm:p-1 md:p-2">
+          <div className="flex flex-col sm:flex-row gap-2 items-end">
+            <div className="relative w-full md:w-1/3">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Search</label>
+              <input
+                type="text"
+                placeholder="Search by Name, Plate, or Truck"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+              />
+            </div>
+            <div className="w-full md:w-1/4">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Company</label>
+              <select
+                value={selectedCompany}
+                onChange={(e) => setSelectedCompany(e.target.value)}
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+              >
+                {companies.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div className="w-full md:w-1/4">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Date</label>
+              <div className="flex items-center gap-2 px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md">
+                <Calendar className="w-3 h-3 text-slate-400" />
+                <input
+                  type="date"
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                  className="border-none focus:outline-none text-[10px] sm:text-xs w-full"
+                />
+              </div>
+            </div>
           </div>
-          <select
-            value={selectedCompany}
-            onChange={(e) => {
-              setSelectedCompany(e.target.value);
-              setPage(1);
-            }}
-            className="px-4 py-2 border rounded"
-          >
-            {companies.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-          <div className="flex items-center gap-2 border rounded px-3 py-1">
-            <Calendar size={18} className="text-gray-500" />
-            <input
-              type="date"
-              value={filterDate}
-              onChange={(e) => {
-                setFilterDate(e.target.value);
-                setPage(1);
-              }}
-              className="border-none focus:outline-none"
-            />
-          </div>
-          <button
-            onClick={exportToExcel}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-transform transform hover:scale-105"
-          >
-            <Download size={18} />
-            <span>Export Excel</span>
-          </button>
         </div>
 
         {/* Popup for download animation */}
@@ -183,19 +179,26 @@ export default function DriverHistory() {
           </div>
         )}
 
-        {/* Table */}
-        {paginatedData.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-10 text-center">
-            <Truck className="mx-auto w-12 h-12 text-gray-300" />
-            <h3 className="mt-4 text-lg font-medium text-gray-700">No records found</h3>
-            <p className="text-sm text-gray-500 mt-1">Try adjusting your search.</p>
+        {/* Records Table */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+          <div className="px-1 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2 border-b border-slate-200">
+            <h2 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900">Driver Records</h2>
           </div>
-        ) : (
-          <>
-            <div className="bg-white rounded-xl shadow-md overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+          {filteredData.length === 0 ? (
+            <div className="p-4 text-center">
+              <div className="flex flex-col items-center gap-0.5 sm:gap-1">
+                <div className="bg-slate-100 p-0.5 sm:p-1 md:p-2 rounded-full">
+                  <Truck className="w-4 h-4 text-slate-400" />
+                </div>
+                <p className="text-slate-500 font-medium text-[10px] sm:text-xs md:text-sm">No records found</p>
+                <p className="text-slate-400 text-[10px] sm:text-xs">Try adjusting your search</p>
+              </div>
+            </div>
+          ) : (
+            <div className="border-t border-slate-200">
+              <div style={{ maxHeight: 'calc(100vh - 250px)', overflowY: 'scroll', overflowX: 'scroll' }}>
+                <table className="w-full min-w-[700px] text-[10px] sm:text-xs md:text-sm">
+                  <thead className="bg-slate-50 border-b border-slate-500 sticky top-0 z-10">
                     <tr>
                       {[
                         'Plate Number #',
@@ -207,69 +210,43 @@ export default function DriverHistory() {
                       ].map((header) => (
                         <th
                           key={header}
-                          className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap"
+                          className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider"
                         >
                           {header}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {paginatedData.map((d) => (
-                      <tr key={d._id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{d.plateNumber}</td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.name}</td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{formatTime(d.arrivalTime)}</td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{formatTime(d.departureTime)}</td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm">
-                          <span
-                            className={`inline-block px-2 py-1 rounded-full text-white text-xs ${getStatus(d.arrivalTime) === 'Full Time'
-                              ? 'bg-green-500'
-                              : 'bg-yellow-500'
-                              }`}
-                          >
+                  <tbody className="divide-y divide-slate-200">
+                    {filteredData.map((d) => (
+                      <tr key={d._id} className="hover:bg-slate-50 transition-colors">
+                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">{d.plateNumber}</td>
+                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">{d.name}</td>
+                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">{formatTime(d.arrivalTime)}</td>
+                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">{formatTime(d.departureTime)}</td>
+                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">
+                          <span className={`inline-flex items-center gap-0.5 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium ${
+                            getStatus(d.arrivalTime) === 'Full Time'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          }`}>
+                            <div className={`w-1 h-1 rounded-full ${
+                              getStatus(d.arrivalTime) === 'Full Time'
+                                ? 'bg-emerald-600'
+                                : 'bg-yellow-600'
+                            }`}></div>
                             {getStatus(d.arrivalTime)}
                           </span>
                         </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-700">{d.destination || 'N/A'}</td>
+                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">{d.destination || '—'}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             </div>
-
-            {/* Pagination */}
-            <div className="flex items-center justify-between mt-6">
-              <button
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === 1
-                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
-              >
-                <ChevronLeft className="w-5 h-5" />
-                Prev
-              </button>
-              <span className="text-sm text-gray-600">
-                Page <span className="font-semibold">{page}</span> of{' '}
-                <span className="font-semibold">{totalPages}</span>
-              </span>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === totalPages
-                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
-              >
-                Next
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

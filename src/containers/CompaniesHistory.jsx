@@ -369,236 +369,241 @@ export default function CompaniesHistory() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-
+    <div className="bg-slate-50">
+      <div className="mx-auto space-y-2 sm:space-y-3">
         {/* Header */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-
-            {/* Title and Icon */}
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl">
-                <Users className="w-6 h-6 text-white" />
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">
+            <div className="flex items-center gap-2">
+              <div className="p-1 sm:p-1.5 bg-emerald-500 rounded-lg">
+                <Users className="w-4 h-4 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  Hauler Performance Dashboard
-                </h1>
-                <p className="mt-1 text-sm text-gray-500">
-                  Track and analyze hauler activities
-                </p>
+                <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Hauler Performance Dashboard</h1>
+                <p className="text-slate-600 mt-0 text-[10px] sm:text-xs md:text-sm">Track and analyze hauler activities</p>
               </div>
             </div>
-
-            {/* Export Button */}
-            <div className="flex items-center gap-2">
+            <div>
               <button
                 onClick={exportToExcel}
-                className="flex items-center gap-2 px-4 py-2 text-white rounded-xl shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-105 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs md:text-sm min-w-[70px]"
               >
-                <FileSpreadsheet size={18} />
-                Export
+                <Download className="w-3 h-3" /> <span>Export Excel</span>
               </button>
             </div>
-
           </div>
         </div>
 
-
         {/* Filters */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-          <div className="flex flex-wrap gap-4 items-end">
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Calendar size={16} /> Start Date
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+            <div className="flex flex-col gap-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700">
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-slate-400" /> Start Date
+                </div>
               </label>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
               />
             </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Calendar size={16} /> End Date
+            <div className="flex flex-col gap-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700">
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-slate-400" /> End Date
+                </div>
               </label>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
               />
             </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Clock size={16} /> Start Time
+            <div className="flex flex-col gap-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700">
+                <div className="flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-slate-400" /> Start Time
+                </div>
               </label>
               <input
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
               />
             </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                <Clock size={16} /> End Time
+            <div className="flex flex-col gap-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700">
+                <div className="flex items-center gap-1">
+                  <Clock className="w-3 h-3 text-slate-400" /> End Time
+                </div>
               </label>
               <input
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="px-3 py-2 border border-gray-200 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
               />
             </div>
-
-            <div className="flex gap-2">
-              <button
-                onClick={handleFilter}
-                disabled={isLoading}
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white px-6 py-2 rounded-xl flex items-center justify-center gap-2 shadow-md transition-all duration-200 hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-1"
-              >
-                {isLoading ? 'Filtering...' : 'Apply Filter'}
-              </button>
-
-
-              <button
-                onClick={clearFilters}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
-              >
-                Clear
-              </button>
-            </div>
+          </div>
+          <div className="flex justify-end gap-2 mt-2 pt-2 border-t border-slate-200">
+            <button
+              onClick={clearFilters}
+              className="px-1 py-0.5 sm:px-2 sm:py-1 text-slate-600 hover:text-slate-900 text-[10px] sm:text-xs"
+            >
+              Clear
+            </button>
+            <button
+              onClick={handleFilter}
+              disabled={isLoading}
+              className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed text-white px-1 py-0.5 sm:px-2 sm:py-1 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs"
+            >
+              {isLoading ? 'Filtering...' : 'Apply Filter'}
+            </button>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-blue-100 text-sm">Total Haulers</p>
-                <p className="text-2xl font-bold">{haulerStats.length}</p>
+                <p className="text-[10px] sm:text-xs text-slate-500">Total Haulers</p>
+                <p className="text-base sm:text-lg font-bold text-slate-900">{haulerStats.length}</p>
               </div>
-              <Users className="h-8 w-8 text-blue-200" />
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Users className="w-4 h-4 text-blue-600" />
+              </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl p-6 text-white">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-emerald-100 text-sm">Total Companies</p>
-                <p className="text-2xl font-bold">{Object.keys(haulersData).length}</p>
+                <p className="text-[10px] sm:text-xs text-slate-500">Total Companies</p>
+                <p className="text-base sm:text-lg font-bold text-slate-900">{Object.keys(haulersData).length}</p>
               </div>
-              <Building className="h-8 w-8 text-emerald-200" />
+              <div className="p-2 bg-emerald-100 rounded-lg">
+                <Building className="w-4 h-4 text-emerald-600" />
+              </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-6 text-white">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-purple-100 text-sm">Total Trips</p>
-                <p className="text-2xl font-bold">{haulerStats.reduce((sum, h) => sum + h.trips, 0)}</p>
+                <p className="text-[10px] sm:text-xs text-slate-500">Total Trips</p>
+                <p className="text-base sm:text-lg font-bold text-slate-900">{haulerStats.reduce((sum, h) => sum + h.trips, 0)}</p>
               </div>
-              <TrendingUp className="h-8 w-8 text-purple-200" />
+              <div className="p-2 bg-indigo-100 rounded-lg">
+                <TrendingUp className="w-4 h-4 text-indigo-600" />
+              </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-6 text-white">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-orange-100 text-sm">Avg per Hauler</p>
-                <p className="text-2xl font-bold">
+                <p className="text-[10px] sm:text-xs text-slate-500">Avg per Hauler</p>
+                <p className="text-base sm:text-lg font-bold text-slate-900">
                   {haulerStats.length > 0 ? Math.round(haulerStats.reduce((sum, h) => sum + h.trips, 0) / haulerStats.length) : 0}
                 </p>
               </div>
-              <Activity className="h-8 w-8 text-orange-200" />
+              <div className="p-2 bg-amber-100 rounded-lg">
+                <Activity className="w-4 h-4 text-amber-600" />
+              </div>
             </div>
           </div>
         </div>
 
         {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
           {/* Arrival/Departure Trend */}
-          <div id="trend-chart" className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-800">
-                <TrendingUp size={20} /> Arrival vs Departure Trend
+          <div id="trend-chart" className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <h3 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900 flex items-center gap-1">
+                <TrendingUp className="w-3 h-3" /> Arrival vs Departure Trend
               </h3>
               <button
                 onClick={() => downloadChart('trend-chart', 'Arrival_vs_Departure_Trend')}
-                className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 text-sm transition-colors"
+                className="flex items-center gap-0.5 text-[10px] sm:text-xs text-slate-600 hover:text-slate-900"
               >
-                <Download size={16} /> Download
+                <Download className="w-3 h-3" /> Download
               </button>
             </div>
-            <div className="h-80">
+            <div className="h-64 sm:h-80">
               <Bar data={trendChartData} options={getModernLineOptions()} />
             </div>
           </div>
 
           {/* Top Haulers */}
-          <div id="top-haulers-chart" className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-800">
-                <Users size={20} /> Top Performing Haulers
+          <div id="top-haulers-chart" className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4">
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <h3 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900 flex items-center gap-1">
+                <Users className="w-3 h-3" /> Top Performing Haulers
               </h3>
               <button
                 onClick={() => downloadChart('top-haulers-chart', 'Top_Haulers')}
-                className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 text-sm transition-colors"
+                className="flex items-center gap-0.5 text-[10px] sm:text-xs text-slate-600 hover:text-slate-900"
               >
-                <Download size={16} /> Download
+                <Download className="w-3 h-3" /> Download
               </button>
             </div>
-            <div className="h-80">
+            <div className="h-64 sm:h-80">
               <Bar data={topHaulersChartData} options={getModernBarOptions()} />
             </div>
           </div>
         </div>
 
         {/* Haulers per Company */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-            <Building size={24} /> Haulers by Company
-          </h2>
+        <div>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+            <div className="flex items-center gap-1">
+              <Building className="w-3 h-3" />
+              <h2 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900">Haulers by Company</h2>
+            </div>
+          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-2 mt-2">
             {Object.keys(haulersData).length === 0 ? (
-              <div className="col-span-full text-center py-12 text-gray-500">
-                <Users size={48} className="mx-auto mb-4 opacity-50" />
-                <p>No hauler data available</p>
-                <p className="text-sm">Try adjusting your filters</p>
+              <div className="col-span-full bg-white rounded-xl shadow-sm border border-slate-200 p-4 text-center">
+                <div className="flex flex-col items-center gap-1">
+                  <div className="p-2 bg-slate-100 rounded-lg">
+                    <Users className="w-6 h-6 text-slate-400" />
+                  </div>
+                  <p className="text-slate-600 text-[10px] sm:text-xs">No hauler data available</p>
+                  <p className="text-slate-400 text-[10px] sm:text-xs">Try adjusting your filters</p>
+                </div>
               </div>
             ) : (
               Object.keys(haulersData).map((company) => (
                 <div key={company} id={`hauler-${company.replace(/\s+/g, '-')}`}
-                  className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-semibold flex items-center gap-2 text-gray-800">
-                      <Building size={18} /> {company}
+                  className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4"
+                >
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <h3 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900 flex items-center gap-1">
+                      <Building className="w-3 h-3" /> {company}
                     </h3>
                     <button
                       onClick={() => downloadChart(`hauler-${company.replace(/\s+/g, '-')}`, `Haulers_${company}`)}
-                      className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 text-sm transition-colors"
+                      className="flex items-center gap-0.5 text-[10px] sm:text-xs text-slate-600 hover:text-slate-900"
                     >
-                      <Download size={14} /> PNG
+                      <Download className="w-3 h-3" /> PNG
                     </button>
                   </div>
-                  <div className="h-64">
+                  <div className="h-48 sm:h-64">
                     <Bar data={getHaulerChartData(company)} options={getModernBarOptions()} />
                   </div>
-                  <div className="mt-4 pt-4 border-t border-gray-100">
-                    <p className="text-sm text-gray-600">
-                      Total Haulers: <span className="font-semibold">{Object.keys(haulersData[company]).length}</span>
+                  <div className="mt-2 pt-2 border-t border-slate-200">
+                    <p className="text-[10px] sm:text-xs text-slate-600">
+                      Total Haulers: <span className="font-medium">{Object.keys(haulersData[company]).length}</span>
                     </p>
-                    <p className="text-sm text-gray-600">
-                      Total Trips: <span className="font-semibold">{Object.values(haulersData[company]).reduce((sum, count) => sum + count, 0)}</span>
+                    <p className="text-[10px] sm:text-xs text-slate-600">
+                      Total Trips: <span className="font-medium">{Object.values(haulersData[company]).reduce((sum, count) => sum + count, 0)}</span>
                     </p>
                   </div>
                 </div>

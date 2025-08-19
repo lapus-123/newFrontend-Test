@@ -17,11 +17,8 @@ export default function Driver() {
   const [haulerId, setHaulerId] = useState('');
   const [editId, setEditId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const itemsPerPage = 5;
 
   useEffect(() => {
     fetchInitialData();
@@ -113,130 +110,158 @@ export default function Driver() {
     (driver.plateNumber || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const paginatedDrivers = filteredDrivers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const totalPages = Math.ceil(filteredDrivers.length / itemsPerPage);
+  // Filter drivers based on search
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-indigo-50 via-white to-purple-50">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-indigo-700">Driver Management</h1>
-          <button
-            onClick={() => { resetForm(); openModal(); }}
-            className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-xl shadow hover:bg-indigo-700"
-          >
-            <Plus className="w-4 h-4" /> Add Driver <Sparkles className="w-3 h-3 opacity-70" />
-          </button>
+    <div className="bg-slate-50">
+      <div className="mx-auto space-y-2">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">
+            <div>
+              <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Driver Management</h1>
+              <p className="text-slate-600 mt-0 text-[10px] sm:text-xs md:text-sm">Manage driver information</p>
+            </div>
+            <button
+              onClick={() => { resetForm(); openModal(); }}
+              className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs md:text-sm min-w-[70px]"
+            >
+              <Plus className="w-3 h-3" /> <span className="hidden xs:inline sm:inline">Add Driver</span>
+            </button>
+          </div>
         </div>
 
-        <div className="relative max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search by name or plate number"
-            value={searchTerm}
-            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-300 outline-none"
-          />
+        {/* Search */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 my-1 sm:my-2 p-1 sm:p-1 md:p-2 flex flex-col md:flex-row gap-1 sm:gap-1 md:gap-2">
+        {/*div className="relative w-full">*/}
+
+          <div className="relative w-full md:w-1/2">
+
+            <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Search</label>
+            <input
+              type="text"
+              placeholder="Search by name or plate number"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+            />
+          </div>
         </div>
 
-        <div className="overflow-auto rounded-xl shadow border border-slate-200 bg-white">
-          <table className="min-w-full divide-y divide-slate-200">
-            <thead className="bg-slate-100">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-600">Driver</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-600">Plate Number</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-600">Company</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-600">Hauler</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-slate-600">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {isLoading ? (
-                <tr><td colSpan="5" className="text-center py-6">Loading...</td></tr>
-              ) : paginatedDrivers.length === 0 ? (
-                <tr><td colSpan="5" className="text-center py-6 text-slate-500">No drivers found.</td></tr>
-              ) : paginatedDrivers.map(driver => (
-                <tr key={driver._id}>
-                  <td className="px-6 py-4 flex items-center gap-2">
-                    <User className="w-4 h-4 text-indigo-600" />
-                    <span className="font-medium text-slate-800">{driver.name}</span>
-                  </td>
-                  <td className="px-6 py-4">{driver.plateNumber || '—'}</td>
-                  <td className="px-6 py-4">{driver.companyId?.name || '—'}</td>
-                  <td className="px-6 py-4">{driver.haulerId?.name || '—'}</td>
-                  <td className="px-6 py-4 text-right space-x-2">
-                    <button onClick={() => handleEdit(driver)} className="text-blue-600 hover:underline text-sm">
-                      <Edit3 className="inline w-4 h-4" /> Edit
-                    </button>
-                    <button onClick={() => handleDelete(driver._id)} className="text-red-600 hover:underline text-sm">
-                      <Trash2 className="inline w-4 h-4" /> Delete
-                    </button>
-                  </td>
+        {/* Records Table */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+          <div className="px-1 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2 border-b border-slate-200">
+            <h2 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900">Driver Records</h2>
+          </div>
+          <div className="border-t border-slate-200">
+            <div style={{ maxHeight: 'calc(100vh - 250px)', overflowY: 'scroll', overflowX: 'scroll' }}>
+              <table className="w-full min-w-[900px] text-[10px] sm:text-xs md:text-sm">
+                <thead className="bg-slate-50 border-b border-slate-200 sticky top-0 z-10">
+                <tr>
+                  <th className="px-2 py-2 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Driver</th>
+                  <th className="px-2 py-2 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Plate Number</th>
+                  <th className="px-2 py-2 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
+                  <th className="px-2 py-2 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Hauler</th>
+                  <th className="px-2 py-2 text-right text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
                 </tr>
-              ))}
-            </tbody>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {isLoading ? (
+                  <tr>
+                    <td colSpan="5" className="px-1 sm:px-1 md:px-2 py-2 sm:py-4 md:py-6 text-center">
+                      <div className="flex flex-col items-center gap-0.5 sm:gap-1">
+                        <div className="bg-slate-100 p-0.5 sm:p-1 md:p-2 rounded-full">
+                          <User className="w-4 h-4 text-slate-400" />
+                        </div>
+                        <p className="text-slate-500 font-medium text-[10px] sm:text-xs md:text-sm">Loading...</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredDrivers.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="px-1 sm:px-1 md:px-2 py-2 sm:py-4 md:py-6 text-center">
+                      <div className="flex flex-col items-center gap-0.5 sm:gap-1">
+                        <div className="bg-slate-100 p-0.5 sm:p-1 md:p-2 rounded-full">
+                          <User className="w-4 h-4 text-slate-400" />
+                        </div>
+                        <p className="text-slate-500 font-medium text-[10px] sm:text-xs md:text-sm">No drivers found</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredDrivers.map(driver => (
+                    <tr key={driver._id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">
+                        <div className="flex items-center gap-0.5 sm:gap-1 md:gap-1.5">
+                          <div className="bg-slate-100 p-0.5 sm:p-1 rounded-full">
+                            <User className="w-3 h-3 text-slate-600" />
+                          </div>
+                          <span className="font-medium text-slate-900 text-[10px] sm:text-xs md:text-sm">{driver.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{driver.plateNumber || '—'}</td>
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{driver.companyId?.name || '—'}</td>
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{driver.haulerId?.name || '—'}</td>
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 whitespace-nowrap text-right text-[10px] sm:text-xs md:text-sm font-medium space-x-0.5 sm:space-x-1">
+                        <button 
+                          onClick={() => handleEdit(driver)} 
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-1 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 rounded-md shadow transition duration-200 ease-in-out text-[10px] sm:text-xs md:text-sm min-w-[55px]"
+                        >
+                          <Edit3 className="w-3 h-3 inline-block mr-0.5" /> <span className="hidden xs:inline sm:inline">Edit</span>
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(driver._id)} 
+                          className="bg-red-600 hover:bg-red-700 text-white font-semibold px-1 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 rounded-md shadow transition duration-200 ease-in-out text-[10px] sm:text-xs md:text-sm min-w-[55px]"
+                        >
+                          <span className="hidden xs:inline sm:inline">Del</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
           </table>
         </div>
 
-        {totalPages > 1 && (
-          <div className="flex justify-center gap-2 pt-4">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-4 py-2 rounded-lg border text-sm ${currentPage === i + 1
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-white text-slate-700 hover:bg-slate-100'
-                  }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        )}
+
       </div>
 
       {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md p-6 rounded-2xl shadow-xl">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-bold">{editId ? 'Edit Driver' : 'Add Driver'}</h3>
+          <div className="bg-white w-full max-w-md p-4 rounded-xl shadow-xl">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-base font-bold">{editId ? 'Edit Driver' : 'Add Driver'}</h3>
               <button onClick={() => setShowModal(false)}>
-                <X className="w-5 h-5 text-slate-600" />
+                <X className="w-4 h-4 text-slate-600" />
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-2">
               <div>
-                <label className="block text-sm mb-1">Driver Name</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2" />
+                <label className="block text-xs mb-1">Driver Name</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-slate-300 rounded-md px-2 py-1 text-xs" />
               </div>
               <div>
-                <label className="block text-sm mb-1">Plate Number</label>
-                <input type="text" value={plateNumber} onChange={(e) => setPlateNumber(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2" />
+                <label className="block text-xs mb-1">Plate Number</label>
+                <input type="text" value={plateNumber} onChange={(e) => setPlateNumber(e.target.value)} className="w-full border border-slate-300 rounded-md px-2 py-1 text-xs" />
               </div>
               <div>
-                <label className="block text-sm mb-1">Company</label>
-                <select value={companyId} onChange={(e) => setCompanyId(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <label className="block text-xs mb-1">Company</label>
+                <select value={companyId} onChange={(e) => setCompanyId(e.target.value)} className="w-full border border-slate-300 rounded-md px-2 py-1 text-xs">
                   <option value="">Select Company</option>
                   {companies.map(c => (<option key={c._id} value={c._id}>{c.name}</option>))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm mb-1">Hauler</label>
-                <select value={haulerId} onChange={(e) => setHaulerId(e.target.value)} className="w-full border border-slate-300 rounded-lg px-3 py-2">
+                <label className="block text-xs mb-1">Hauler</label>
+                <select value={haulerId} onChange={(e) => setHaulerId(e.target.value)} className="w-full border border-slate-300 rounded-md px-2 py-1 text-xs">
                   <option value="">Select Hauler</option>
                   {haulers.map(h => (<option key={h._id} value={h._id}>{h.name}</option>))}
                 </select>
               </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <button onClick={() => setShowModal(false)} className="px-4 py-2 border rounded-lg text-slate-600" disabled={isSubmitting}>Cancel</button>
-                <button onClick={handleSubmit} className="px-4 py-2 bg-indigo-600 text-white rounded-lg" disabled={isSubmitting}>
+              <div className="flex justify-end gap-1 pt-2">
+                <button onClick={() => setShowModal(false)} className="px-2 py-1 border rounded-md text-slate-600 text-xs" disabled={isSubmitting}>Cancel</button>
+                <button onClick={handleSubmit} className="px-2 py-1 bg-indigo-600 text-white rounded-md text-xs" disabled={isSubmitting}>
                   {isSubmitting ? 'Saving...' : editId ? 'Update' : 'Create'}
                 </button>
               </div>
@@ -246,6 +271,8 @@ export default function Driver() {
       )}
 
       <ToastContainer position="top-right" autoClose={3000} />
+    </div>
+    </div>
     </div>
   );
 }

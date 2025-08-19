@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Search, Clock, Truck, User,
-    ArrowRight, Plus, Calendar, X, Edit, Trash2
+    ArrowRight, Plus, Calendar, X, Edit, Trash2, Download
 } from 'lucide-react';
 import axios from '../utils/axios';
 import { toast, ToastContainer } from 'react-toastify';
@@ -354,132 +354,128 @@ export default function DriverManagement() {
         : unifiedFilteredLogs;
 
     return (
-        <div className="min-h-screen bg-slate-50 p-4 lg:p-6">
+        /*removed the margins and paddings:  p-1 sm:p-2 md:p-3 lg:p-4*/
+    <div className=" bg-slate-50">
+
             {/* Header */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">Driver Management</h1>
-                        <p className="text-slate-600 mt-1">Track arrivals and departures</p>
+                        <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Driver Management</h1>
+                        <p className="text-slate-600 mt-0 text-[10px] sm:text-xs md:text-sm">Track arrivals and departures</p>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-1 sm:gap-1 md:gap-2">
                         <button
                             onClick={() => openModal('arrival')}
-                            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
+                            className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs md:text-sm min-w-[70px]"
                         >
-                            <ArrowRight className="w-4 h-4" />
-                            Record Arrival
+                            <ArrowRight className="w-3 h-3" />
+                            <span className="hidden xs:inline sm:inline">Record Arrival</span>
                         </button>
                         <button
                             onClick={ExcelExport}
-                            className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 rounded-lg font-medium transition-colors shadow-sm"
+                            className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs md:text-sm min-w-[70px]"
                         >
-                            Export Excel
+                            <Download className="w-3 h-3" /> <span>Export Excel</span>
                         </button>
                     </div>
                 </div>
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 my-4 p-4 flex flex-col md:flex-row gap-4">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 my-1 sm:my-2 p-1 sm:p-1 md:p-2 flex flex-col md:flex-row gap-1 sm:gap-1 md:gap-2">
                 <div className="relative w-full md:w-1/2">
-                    <label className="block text-sm font-medium text-slate-700 mb-1">Search</label>
+                    <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Search</label>
                     <input
                         type="text"
-                        placeholder="Search by Driver, Company, or Truck Type..."
+                        placeholder="Search..."
                         value={searchTerm}
                         onChange={handleSearch}
-                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
                     />
                 </div>
-                <div className="relative w-auto">
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
-                        Filter by Date
+                <div className="relative w-full md:w-auto">
+                    <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">
+                        Date
                     </label>
                     <input
                         type="date"
                         value={selectedDate}
                         onChange={(e) => setSelectedDate(e.target.value)}
-                        className="w-36 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full sm:w-20 md:w-28 px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
                     />
                 </div>
-
             </div>
 
             {/* Records Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-200">
-                    <h2 className="text-lg font-semibold text-slate-900">Recent Records</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+                <div className="px-1 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2 border-b border-slate-200">
+                    <h2 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900">Recent Records</h2>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-slate-50 border-b border-slate-200">
+                <div className="border-t border-slate-200">
+                    <div style={{ maxHeight: 'calc(100vh - 250px)', overflowY: 'scroll', overflowX: 'scroll' }}>
+                        <table className="w-full min-w-[700px] text-[10px] sm:text-xs md:text-sm">
+                        <thead className="bg-slate-50 border-b border-slate-800 sticky top-0 z-10">
                             <tr>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Driver</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Plate No.</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Truck Type</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Hauler</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Arrival</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Departure</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Destination</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Products</th>
-                                <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">DN Number</th>
-                                <th className="text-right px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Driver</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Plate</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Truck</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Hauler</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Arr.</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Dep.</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Dest.</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Products</th>
+                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">DN</th>
+                                <th className="text-right px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200">
                             {finalFilteredLogs.length > 0 ? (
                                 finalFilteredLogs.map((rec) => (
                                     <tr key={rec._id} className="hover:bg-slate-50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="bg-slate-100 p-2 rounded-full">
-                                                    <User className="w-4 h-4 text-slate-600" />
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">
+                                            <div className="flex items-center gap-0.5 sm:gap-1 md:gap-1.5">
+                                                <div className="bg-slate-100 p-0.5 sm:p-1 rounded-full">
+                                                    <User className="w-3 h-3 text-slate-600" />
                                                 </div>
-                                                <span className="font-medium text-slate-900">{rec.name}</span>
+                                                <span className="font-medium text-slate-900 text-[10px] sm:text-xs md:text-sm">{rec.name}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600">{rec.plateNumber || '—'}</td>
-                                        <td className="px-6 py-4 text-slate-600">
-                                            {rec.companyId?.name || rec.company || '—'}
-                                        </td>
-                                        <td className="px-6 py-4 text-slate-600">
-                                            {rec.truckTypeId?.type || rec.truckType || '—'}
-                                        </td>
-                                        <td className="px-6 py-4 text-slate-600">
-                                            {rec.haulerId?.name || rec.hauler || '—'}
-                                        </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.plateNumber || '—'}</td>
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.companyId?.name || rec.company || '—'}</td>
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.truckTypeId?.type || rec.truckType || '—'}</td>
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.haulerId?.name || rec.hauler || '—'}</td>
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">
                                             {rec.arrivalTime ? (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                                                    <div className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></div>
+                                                <span className="inline-flex items-center gap-0.5 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-emerald-100 text-emerald-700">
+                                                    <div className="w-1 h-1 bg-emerald-600 rounded-full"></div>
                                                     {rec.arrivalTime}
                                                 </span>
                                             ) : (
                                                 <span className="text-slate-400">—</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">
                                             {rec.departureTime ? (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                                                    <div className="w-1.5 h-1.5 bg-blue-600 rounded-full"></div>
+                                                <span className="inline-flex items-center gap-0.5 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-blue-100 text-blue-700">
+                                                    <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
                                                     {rec.departureTime}
                                                 </span>
                                             ) : (
                                                 <span className="text-slate-400">—</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600">{rec.destination || '—'}</td>
-                                        <td className="px-6 py-4 text-slate-600">
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.destination || '—'}</td>
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">
                                             {rec.products?.length > 0 ? (
-                                                <ul className="space-y-1">
+                                                <ul className="space-y-0.5">
                                                     {rec.products.map((p, idx) => {
                                                         const productName = typeof p.productId === 'object'
                                                             ? p.productId?.name || 'Unknown Product'
                                                             : products.find(prod => prod._id === p.productId)?.name || 'Unknown Product';
                                                         return (
-                                                            <li key={idx}>{productName}</li>
+                                                            <li key={idx} className="text-[10px] sm:text-xs md:text-sm">{productName}</li>
                                                         );
                                                     })}
                                                 </ul>
@@ -487,37 +483,37 @@ export default function DriverManagement() {
                                                 '—'
                                             )}
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600">{rec.dnNumber || '—'}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.dnNumber || '—'}</td>
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 whitespace-nowrap text-right text-[10px] sm:text-xs md:text-sm font-medium space-x-0.5 sm:space-x-1">
                                             <button
                                                 onClick={() => handleRecordDeparture(rec)}
-                                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition duration-200 ease-in-out"
+                                                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-1 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 rounded-md shadow transition duration-200 ease-in-out text-[10px] sm:text-xs md:text-sm min-w-[55px]"
                                             >
-                                                Record Departure
+                                                <span className="hidden xs:inline sm:inline">Dep.</span>
                                             </button>
                                             <button
                                                 onClick={() => handleFullEdit(rec)}
-                                                className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition duration-200 ease-in-out"
+                                                className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-1 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 rounded-md shadow transition duration-200 ease-in-out text-[10px] sm:text-xs md:text-sm min-w-[55px]"
                                             >
-                                                <Edit className="w-4 h-4 inline-block mr-1" /> Edit
+                                                <Edit className="w-3 h-3 inline-block mr-0.5" /> <span className="hidden xs:inline sm:inline">Edit</span>
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(rec._id)}
-                                                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition duration-200 ease-in-out"
+                                                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-1 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 rounded-md shadow transition duration-200 ease-in-out text-[10px] sm:text-xs md:text-sm min-w-[55px]"
                                             >
-                                                Delete
+                                                <span className="hidden xs:inline sm:inline">Del</span>
                                             </button>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="11" className="px-6 py-12 text-center">
-                                        <div className="flex flex-col items-center gap-2">
-                                            <div className="bg-slate-100 p-3 rounded-full">
-                                                <Truck className="w-6 h-6 text-slate-400" />
+                                    <td colSpan="11" className="px-1 sm:px-1 md:px-2 py-2 sm:py-4 md:py-6 text-center">
+                                        <div className="flex flex-col items-center gap-0.5 sm:gap-1">
+                                            <div className="bg-slate-100 p-0.5 sm:p-1 md:p-2 rounded-full">
+                                                <Truck className="w-4 h-4 text-slate-400" />
                                             </div>
-                                            <p className="text-slate-500 font-medium">No records found</p>
+                                            <p className="text-slate-500 font-medium text-[10px] sm:text-xs md:text-sm">No records found</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -582,6 +578,7 @@ export default function DriverManagement() {
 
             {/* Toast Container */}
             <ToastContainer position="top-right" autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+        </div>
         </div>
     );
 }

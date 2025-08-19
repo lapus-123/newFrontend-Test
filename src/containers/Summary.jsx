@@ -25,6 +25,7 @@ export default function Summary() {
         if (drivers.length > 0) {
             calculateSummary();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [drivers, timeFilter]);
 
     const fetchDrivers = async () => {
@@ -168,16 +169,16 @@ export default function Summary() {
 
     const renderProductTags = (productNames) => {
         if (!productNames || productNames.length === 0) {
-            return <span className="text-slate-400">—</span>;
+            return <span className="text-slate-400 text-[10px] sm:text-xs md:text-sm">—</span>;
         }
         return (
             <div className="flex flex-wrap gap-1">
                 {productNames.map((name, idx) => (
                     <span
                         key={idx}
-                        className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700"
+                        className="inline-flex items-center gap-1 sm:gap-1.5 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs md:text-sm font-medium bg-purple-100 text-purple-700"
                     >
-                        <Package className="w-3 h-3" />
+                        <Package className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                         {name}
                     </span>
                 ))}
@@ -194,147 +195,224 @@ export default function Summary() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 p-6">
-            <div className="max-w-7xl mx-auto">
+        <div className="bg-slate-50">
+            <div className="mx-auto">
                 {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold text-slate-900">Dashboard Summary</h1>
-                        <p className="text-slate-600 mt-1">Comprehensive overview of driver activities</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <Filter className="w-4 h-4 text-slate-500" />
-                        <select
-                            value={timeFilter}
-                            onChange={(e) => setTimeFilter(e.target.value)}
-                            className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        >
-                            <option value="all">All Time</option>
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                        </select>
+                <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">
+                        <div>
+                            <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Dashboard Summary</h1>
+                            <p className="text-slate-600 mt-0 text-[10px] sm:text-xs md:text-sm">Comprehensive overview of driver activities</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <select
+                                value={timeFilter}
+                                onChange={(e) => setTimeFilter(e.target.value)}
+                                className="px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 border border-slate-300 rounded-md text-[10px] sm:text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
+                {/* Filter Border */}
+                <div className="my-1 sm:my-2"></div>
+
                 {/* Stats Cards */}
-                <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-blue-100 p-2 rounded-lg">
-                                <Users className="w-5 h-5 text-blue-600" />
+                <div className="grid grid-cols-2 lg:grid-cols-6 gap-1 sm:gap-2 md:gap-3 mb-1 sm:mb-2 md:mb-3">
+                    <div className="bg-white rounded-xl p-1 sm:p-2 md:p-3 shadow-sm border border-slate-200">
+                        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+                            <div className="bg-blue-100 p-1 sm:p-1.5 md:p-2 rounded-lg">
+                                <Users className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-blue-600" />
                             </div>
                             <div>
-                                <p className="text-slate-600 text-sm font-medium">Total Drivers</p>
-                                <p className="text-2xl font-bold text-slate-900">{summary.totalDrivers}</p>
+                                <p className="text-slate-600 text-[10px] sm:text-xs md:text-sm font-medium">Total Drivers</p>
+                                <p className="text-sm sm:text-base md:text-lg font-bold text-slate-900">{summary.totalDrivers}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-emerald-100 p-2 rounded-lg">
-                                <Clock className="w-5 h-5 text-emerald-600" />
+                    <div className="bg-white rounded-xl p-1 sm:p-2 md:p-3 shadow-sm border border-slate-200">
+                        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+                            <div className="bg-emerald-100 p-1 sm:p-1.5 md:p-2 rounded-lg">
+                                <Clock className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-emerald-600" />
                             </div>
                             <div>
-                                <p className="text-slate-600 text-sm font-medium">Total Arrivals</p>
-                                <p className="text-2xl font-bold text-slate-900">{summary.totalArrivals}</p>
+                                <p className="text-slate-600 text-[10px] sm:text-xs md:text-sm font-medium">Total Arrivals</p>
+                                <p className="text-sm sm:text-base md:text-lg font-bold text-slate-900">{summary.totalArrivals}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-blue-100 p-2 rounded-lg">
-                                <Clock className="w-5 h-5 text-blue-600" />
+                    <div className="bg-white rounded-xl p-1 sm:p-2 md:p-3 shadow-sm border border-slate-200">
+                        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+                            <div className="bg-blue-100 p-1 sm:p-1.5 md:p-2 rounded-lg">
+                                <Clock className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-blue-600" />
                             </div>
                             <div>
-                                <p className="text-slate-600 text-sm font-medium">Total Departures</p>
-                                <p className="text-2xl font-bold text-slate-900">{summary.totalDepartures}</p>
+                                <p className="text-slate-600 text-[10px] sm:text-xs md:text-sm font-medium">Total Departures</p>
+                                <p className="text-sm sm:text-base md:text-lg font-bold text-slate-900">{summary.totalDepartures}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-indigo-100 p-2 rounded-lg">
-                                <Building2 className="w-5 h-5 text-indigo-600" />
+                    <div className="bg-white rounded-xl p-1 sm:p-2 md:p-3 shadow-sm border border-slate-200">
+                        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+                            <div className="bg-indigo-100 p-1 sm:p-1.5 md:p-2 rounded-lg">
+                                <Building2 className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-indigo-600" />
                             </div>
                             <div>
-                                <p className="text-slate-600 text-sm font-medium">Active Companies</p>
-                                <p className="text-2xl font-bold text-slate-900">{summary.activeCompanies}</p>
+                                <p className="text-slate-600 text-[10px] sm:text-xs md:text-sm font-medium">Active Companies</p>
+                                <p className="text-sm sm:text-base md:text-lg font-bold text-slate-900">{summary.activeCompanies}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-teal-100 p-2 rounded-lg">
-                                <ArrowUp className="w-5 h-5 text-teal-600" />
+                    <div className="bg-white rounded-xl p-1 sm:p-2 md:p-3 shadow-sm border border-slate-200">
+                        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+                            <div className="bg-teal-100 p-1 sm:p-1.5 md:p-2 rounded-lg">
+                                <ArrowUp className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-teal-600" />
                             </div>
                             <div>
-                                <p className="text-slate-600 text-sm font-medium">Today's Arrivals</p>
-                                <p className="text-2xl font-bold text-slate-900">{summary.todayArrivals}</p>
+                                <p className="text-slate-600 text-[10px] sm:text-xs md:text-sm font-medium">Today's Arrivals</p>
+                                <p className="text-sm sm:text-base md:text-lg font-bold text-slate-900">{summary.todayArrivals}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-cyan-100 p-2 rounded-lg">
-                                <ArrowDown className="w-5 h-5 text-cyan-600" />
+                    <div className="bg-white rounded-xl p-1 sm:p-2 md:p-3 shadow-sm border border-slate-200">
+                        <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+                            <div className="bg-cyan-100 p-1 sm:p-1.5 md:p-2 rounded-lg">
+                                <ArrowDown className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-cyan-600" />
                             </div>
                             <div>
-                                <p className="text-slate-600 text-sm font-medium">Today's Departures</p>
-                                <p className="text-2xl font-bold text-slate-900">{summary.todayDepartures}</p>
+                                <p className="text-slate-600 text-[10px] sm:text-xs md:text-sm font-medium">Today's Departures</p>
+                                <p className="text-sm sm:text-base md:text-lg font-bold text-slate-900">{summary.todayDepartures}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Charts */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-1 sm:gap-2 md:gap-3 mb-1 sm:mb-2 md:mb-3">
                     {/* Hourly Trends */}
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Hourly Activity</h3>
+                    <div className="bg-white p-1 sm:p-2 md:p-3 rounded-xl shadow-sm border border-slate-200">
+                        <h3 className="text-sm sm:text-base md:text-lg font-semibold text-slate-900 mb-1 sm:mb-2 md:mb-3">Hourly Activity</h3>
                         <ResponsiveContainer width="100%" height={300}>
                             <LineChart data={getHourlyData()}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                                <XAxis dataKey="time" stroke="#64748b" fontSize={12} tickLine={false} />
-                                <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
+                                <XAxis 
+                                    dataKey="time" 
+                                    stroke="#64748b" 
+                                    fontSize={10}
+                                    tickLine={false} 
+                                    style={{
+                                        fontSize: '10px',
+                                        '@media (min-width: 640px)': {
+                                            fontSize: '12px'
+                                        },
+                                        '@media (min-width: 768px)': {
+                                            fontSize: '14px'
+                                        }
+                                    }}
+                                />
+                                <YAxis 
+                                    stroke="#64748b" 
+                                    fontSize={10} 
+                                    tickLine={false} 
+                                    axisLine={false}
+                                    style={{
+                                        fontSize: '10px',
+                                        '@media (min-width: 640px)': {
+                                            fontSize: '12px'
+                                        },
+                                        '@media (min-width: 768px)': {
+                                            fontSize: '14px'
+                                        }
+                                    }}
+                                />
                                 <Tooltip
                                     contentStyle={{
                                         backgroundColor: 'white',
                                         border: '1px solid #e2e8f0',
                                         borderRadius: '8px',
                                         boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+                                        fontSize: '10px',
+                                        '@media (min-width: 640px)': {
+                                            fontSize: '12px'
+                                        },
+                                        '@media (min-width: 768px)': {
+                                            fontSize: '14px'
+                                        }
                                     }}
                                 />
-                                <Line type="monotone" dataKey="arrivals" stroke="#10b981" strokeWidth={2} dot={{ fill: '#10b981', strokeWidth: 2, r: 4 }} name="Arrivals" />
-                                <Line type="monotone" dataKey="departures" stroke="#3b82f6" strokeWidth={2} dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }} name="Departures" />
+                                <Line 
+                                    type="monotone" 
+                                    dataKey="arrivals" 
+                                    stroke="#10b981" 
+                                    strokeWidth={1}
+                                    dot={{ fill: '#10b981', strokeWidth: 1, r: 2 }} 
+                                    name="Arrivals"
+                                />
+                                <Line 
+                                    type="monotone" 
+                                    dataKey="departures" 
+                                    stroke="#3b82f6" 
+                                    strokeWidth={1}
+                                    dot={{ fill: '#3b82f6', strokeWidth: 1, r: 2 }} 
+                                    name="Departures"
+                                />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
 
                     {/* Truck Types */}
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Truck Type Distribution</h3>
+                    <div className="bg-white p-1 sm:p-2 md:p-3 rounded-xl shadow-sm border border-slate-200">
+                        <h3 className="text-sm sm:text-base md:text-lg font-semibold text-slate-900 mb-1 sm:mb-2 md:mb-3">Truck Type Distribution</h3>
                         <ResponsiveContainer width="100%" height={300}>
-                            <RechartsPieChart cx="50%" cy="50%" outerRadius={100}>
+                            <RechartsPieChart cx="50%" cy="50%" outerRadius={90}>
                                 <Pie
                                     data={getTruckTypeData()}
                                     dataKey="value"
                                     nameKey="name"
                                     cx="50%"
                                     cy="50%"
-                                    outerRadius={100}
-                                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                    outerRadius={90}
+                                    label={({ name, percent }) => (
+                                        <text
+                                            x={0}
+                                            y={0}
+                                            className="text-[10px] sm:text-xs md:text-sm"
+                                            textAnchor="middle"
+                                            dominantBaseline="middle"
+                                        >
+                                            {`${name} ${(percent * 100).toFixed(0)}%`}
+                                        </text>
+                                    )}
                                 >
                                     {getTruckTypeData().map((_, index) => (
                                         <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                                     ))}
                                 </Pie>
-                                <Tooltip />
+                                <Tooltip 
+                                    contentStyle={{
+                                        backgroundColor: 'white',
+                                        border: '1px solid #e2e8f0',
+                                        borderRadius: '8px',
+                                        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
+                                        fontSize: '10px',
+                                        '@media (min-width: 640px)': {
+                                            fontSize: '12px'
+                                        },
+                                        '@media (min-width: 768px)': {
+                                            fontSize: '14px'
+                                        }
+                                    }}
+                                />
                             </RechartsPieChart>
                         </ResponsiveContainer>
                     </div>
@@ -342,75 +420,75 @@ export default function Summary() {
 
                 {/* Drivers Table */}
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div className="p-6 border-b border-slate-200">
-                        <h3 className="text-lg font-semibold text-slate-900">Driver Records</h3>
+                    <div className="p-1 sm:p-2 md:p-3 border-b border-slate-200">
+                        <h3 className="text-sm sm:text-base md:text-lg font-semibold text-slate-900">Driver Records</h3>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead className="bg-slate-50">
                                 <tr>
-                                    <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Driver</th>
-                                    <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
-                                    <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Truck Type</th>
-                                    <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Plate Number</th>
-                                    <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Arrival</th>
-                                    <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Departure</th>
-                                    <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Destination</th>
-                                    <th className="text-left px-6 py-3 text-xs font-medium text-slate-500 uppercase tracking-wider">Products</th>
+                                    <th className="text-left text-[10px] sm:text-xs md:text-sm font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">Driver</th>
+                                    <th className="text-left text-[10px] sm:text-xs md:text-sm font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">Company</th>
+                                    <th className="text-left text-[10px] sm:text-xs md:text-sm font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">Truck Type</th>
+                                    <th className="text-left text-[10px] sm:text-xs md:text-sm font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">Plate Number</th>
+                                    <th className="text-left text-[10px] sm:text-xs md:text-sm font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">Arrival</th>
+                                    <th className="text-left text-[10px] sm:text-xs md:text-sm font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">Departure</th>
+                                    <th className="text-left text-[10px] sm:text-xs md:text-sm font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">Destination</th>
+                                    <th className="text-left text-[10px] sm:text-xs md:text-sm font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">Products</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-200">
                                 {getFilteredDrivers().map((driver) => (
                                     <tr key={driver._id} className="hover:bg-slate-50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="bg-slate-100 p-2 rounded-full">
-                                                    <Users className="w-4 h-4 text-slate-600" />
+                                        <td className="px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">
+                                            <div className="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+                                                <div className="bg-slate-100 p-1 sm:p-1.5 md:p-2 rounded-full">
+                                                    <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 text-slate-600" />
                                                 </div>
                                                 <div>
-                                                    <div className="font-medium text-slate-900">{driver.name}</div>
+                                                    <div className="font-medium text-slate-900 text-[10px] sm:text-xs md:text-sm">{driver.name}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600">{driver.company}</td>
-                                        <td className="px-6 py-4">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                                                <Truck className="w-3 h-3" />
+                                        <td className="px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 text-slate-600 text-[10px] sm:text-xs md:text-sm">{driver.company}</td>
+                                        <td className="px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">
+                                            <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs md:text-sm font-medium bg-blue-100 text-blue-700">
+                                                <Truck className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                                 {driver.truckType}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600 font-mono text-sm">{driver.plateNumber}</td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2 text-slate-600 font-mono text-[10px] sm:text-xs md:text-sm">{driver.plateNumber}</td>
+                                        <td className="px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">
                                             {driver.arrivalTime ? (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700">
-                                                    <Clock className="w-3 h-3" />
+                                                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs md:text-sm font-medium bg-emerald-100 text-emerald-700">
+                                                    <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                                     {new Date(driver.arrivalTime).toLocaleString()}
                                                 </span>
                                             ) : (
-                                                <span className="text-slate-400">—</span>
+                                                <span className="text-slate-400 text-[10px] sm:text-xs md:text-sm">—</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">
                                             {driver.departureTime ? (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                                                    <Clock className="w-3 h-3" />
+                                                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs md:text-sm font-medium bg-blue-100 text-blue-700">
+                                                    <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                                     {new Date(driver.departureTime).toLocaleString()}
                                                 </span>
                                             ) : (
-                                                <span className="text-slate-400">—</span>
+                                                <span className="text-slate-400 text-[10px] sm:text-xs md:text-sm">—</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">
                                             {driver.destination ? (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-                                                    <MapPin className="w-3 h-3" />
+                                                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs md:text-sm font-medium bg-amber-100 text-amber-700">
+                                                    <MapPin className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                                                     {driver.destination}
                                                 </span>
                                             ) : (
-                                                <span className="text-slate-400">—</span>
+                                                <span className="text-slate-400 text-[10px] sm:text-xs md:text-sm">—</span>
                                             )}
                                         </td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-1 sm:px-2 md:px-3 py-1 sm:py-1.5 md:py-2">
                                             {renderProductTags(driver.productNames)}
                                         </td>
                                     </tr>

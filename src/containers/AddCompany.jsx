@@ -110,7 +110,7 @@ export default function Company() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-6">
+  <div className="bg-slate-50">
       {/* Toast */}
       {toast.show && (
         <div className={`fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transition-all duration-300 ${toast.type === 'success' ? 'bg-green-500' :
@@ -122,116 +122,137 @@ export default function Company() {
       )}
 
       {/* Header */}
-      <div className="max-w-6xl mx-auto mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-          Manage Companies
-        </h1>
-        <p className="text-gray-600 mt-1">Add, view, edit or delete registered companies</p>
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">
+          <div>
+            <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Manage Companies</h1>
+            <p className="text-slate-600 mt-0 text-[10px] sm:text-xs md:text-sm">Add, view, edit or delete registered companies</p>
+          </div>
+          <div>
+            <button
+              onClick={() => {
+                resetForm();
+                setIsModalOpen(true);
+              }}
+              className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs md:text-sm min-w-[70px]"
+            >
+              <Plus className="w-3 h-3" /> <span>Add Company</span>
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* Controls */}
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
-        <div className="relative w-full sm:w-1/3">
+      {/* Search Filter */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 my-1 sm:my-2 p-1 sm:p-1 md:p-2">
+        <div className="relative w-full md:w-1/2">
+          <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Search</label>
           <input
             type="text"
             placeholder="Search by company name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 pl-10 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
           />
-          <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
         </div>
-        <button
-          onClick={() => {
-            resetForm();
-            setIsModalOpen(true);
-          }}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl font-semibold shadow-md flex items-center gap-2"
-        >
-          <Plus className="w-5 h-5" /> Add Company
-        </button>
       </div>
 
-      {/* Table */}
-      <div className="max-w-6xl mx-auto overflow-x-auto bg-white rounded-xl shadow-md border">
-        <table className="min-w-full table-auto text-left">
-          <thead className="bg-gray-100 text-gray-700">
-            <tr>
-              <th className="px-6 py-3">ID</th>
-              <th className="px-6 py-3">Name</th>
-              <th className="px-6 py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredCompanies.length > 0 ? (
-              filteredCompanies.map((company) => (
-                <tr key={company._id}>
-                  <td className="px-6 py-4">{company._id}</td>
-                  <td className="px-6 py-4">{company.name}</td>
-                  <td className="px-6 py-4 space-x-2">
-                    <button
-                      onClick={() => editCompany(company._id)}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <Edit className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => deleteCompany(company._id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </td>
+      {/* Companies Table */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+        <div className="px-1 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2 border-b border-slate-200">
+          <h2 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900">Companies List</h2>
+        </div>
+        <div className="border-t border-slate-200">
+          <div style={{ maxHeight: 'calc(100vh - 250px)', overflowY: 'scroll', overflowX: 'scroll' }}>
+            <table className="w-full min-w-[700px] text-[10px] sm:text-xs md:text-sm">
+              <thead className="bg-slate-50 border-b border-slate-500 sticky top-0 z-10">
+                <tr>
+                  <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">ID</th>
+                  <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
+                  <th className="text-right px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3" className="px-6 py-8 text-center text-gray-500">
-                  No companies found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {filteredCompanies.length > 0 ? (
+                  filteredCompanies.map((company) => (
+                    <tr key={company._id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">{company._id}</td>
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">{company.name}</td>
+                      <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 whitespace-nowrap text-right text-[10px] sm:text-xs md:text-sm font-medium space-x-0.5 sm:space-x-1">
+                        <button
+                          onClick={() => editCompany(company._id)}
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold px-1 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 rounded-md shadow transition duration-200 ease-in-out text-[10px] sm:text-xs md:text-sm min-w-[55px]"
+                        >
+                          <Edit className="w-3 h-3 inline-block mr-0.5" /> <span className="hidden xs:inline sm:inline">Edit</span>
+                        </button>
+                        <button
+                          onClick={() => deleteCompany(company._id)}
+                          className="bg-red-600 hover:bg-red-700 text-white font-semibold px-1 py-0.5 sm:px-1 sm:py-0.5 md:px-2 md:py-1 rounded-md shadow transition duration-200 ease-in-out text-[10px] sm:text-xs md:text-sm min-w-[55px]"
+                        >
+                          <span className="hidden xs:inline sm:inline">Del</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="px-1 sm:px-1 md:px-2 py-2 sm:py-4 md:py-6 text-center">
+                      <div className="flex flex-col items-center gap-0.5 sm:gap-1">
+                        <div className="bg-slate-100 p-0.5 sm:p-1 md:p-2 rounded-full">
+                          <Building className="w-4 h-4 text-slate-400" />
+                        </div>
+                        <p className="text-slate-500 font-medium text-[10px] sm:text-xs md:text-sm">No companies found</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-md">
-          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full p-6">
-            <h2 className="text-2xl font-bold mb-4">
-              {editId ? 'Edit Company' : 'Add New Company'}
-            </h2>
-            <form onSubmit={editId ? updateCompany : addCompany}>
-              <div className="mb-4">
-                <label className="block text-sm font-semibold mb-1">
-                  <Building className="inline w-4 h-4 mr-2 text-blue-500" />
-                  Company Name
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-xl">
+            <div className="p-1 sm:p-2 md:p-3 border-b border-slate-200">
+              <h2 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">
+                {editId ? 'Edit Company' : 'Add New Company'}
+              </h2>
+            </div>
+            <form onSubmit={editId ? updateCompany : addCompany} className="p-1 sm:p-2 md:p-3 space-y-2">
+              <div>
+                <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">
+                  <div className="flex items-center gap-0.5 sm:gap-1">
+                    <Building className="w-3 h-3 text-emerald-500" />
+                    Company Name
+                  </div>
                 </label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter company name"
+                  className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
                 />
               </div>
-              <div className="flex justify-end space-x-3">
+              <div className="flex justify-end gap-1 pt-2 border-t border-slate-200">
                 <button
                   type="button"
                   onClick={() => {
                     setIsModalOpen(false);
                     resetForm();
                   }}
-                  className="text-gray-600 hover:text-gray-900"
+                  className="px-1 py-0.5 sm:px-2 sm:py-1 text-slate-600 hover:text-slate-900 text-[10px] sm:text-xs"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-xl hover:opacity-90"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 rounded-md font-semibold shadow transition duration-200 ease-in-out text-[10px] sm:text-xs"
                 >
-                  {editId ? 'Update' : 'Add'}
+                  {editId ? 'Update Company' : 'Add Company'}
                 </button>
               </div>
             </form>

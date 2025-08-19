@@ -198,104 +198,112 @@ export default function ArrivedTrucks() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-blue-600 mb-6">Arrived Trucks</h1>
+    <div className="bg-slate-50">
+      <div className="mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">
+            <div>
+              <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Arrived Trucks</h1>
+              <p className="text-slate-600 mt-0 text-[10px] sm:text-xs md:text-sm">View and track arrived truck records</p>
+            </div>
+            <div>
+              <button
+                onClick={handleDownload}
+                className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs md:text-sm min-w-[70px]"
+              >
+                <Download className="w-3 h-3" /> <span>Export Excel</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-grow w-full sm:w-auto">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 my-1 sm:my-2 p-1 sm:p-1 md:p-2">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-2 md:gap-3">
+            <div className="col-span-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Search</label>
               <input
                 type="text"
                 placeholder="Search by Driver or Hauler"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full px-4 py-2 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
               />
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Select Date</label>
-                <input
-                  type="date"
-                  value={filterDate}
-                  onChange={(e) => {
-                    setFilterDate(e.target.value);
-                    // Reset time filters when date changes
-                    if (!e.target.value) {
-                      setFromTime('');
-                      setToTime('');
-                    }
-                  }}
-                  className="px-2 py-1 text-sm border border-gray-300 rounded"
-                />
-              </div>
+            <div className="col-span-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Date</label>
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => {
+                  setFilterDate(e.target.value);
+                  if (!e.target.value) {
+                    setFromTime('');
+                    setToTime('');
+                  }
+                }}
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+              />
+            </div>
+            <div className="col-span-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Month</label>
+              <select
+                value={filterMonth}
+                onChange={(e) => setFilterMonth(e.target.value)}
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+              >
+                {months.map(m => (
+                  <option key={m.value} value={m.value}>{m.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-span-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Year</label>
+              <select
+                value={filterYear}
+                onChange={(e) => setFilterYear(e.target.value)}
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+              >
+                <option value="">All Years</option>
+                {years.map(y => (
+                  <option key={y} value={y}>{y}</option>
+                ))}
+              </select>
+            </div>
 
-              {/* Time Filters - Only show when date is selected */}
-              {filterDate && (
-                <>
-                  <div>
-                    <label className="block text-xs text-gray-500 mb-1">From Time</label>
-                    <input
-                      type="time"
-                      value={fromTime}
-                      onChange={(e) => setFromTime(e.target.value)}
-                      className="px-2 py-1 text-sm border border-gray-300 rounded"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs text-gray-500 mb-1">To Time</label>
-                    <input
-                      type="time"
-                      value={toTime}
-                      onChange={(e) => setToTime(e.target.value)}
-                      className="px-2 py-1 text-sm border border-gray-300 rounded"
-                    />
-                  </div>
-                </>
-              )}
+            {/* Time Filters - Only show when date is selected */}
+            {filterDate && (
+              <>
+                <div className="col-span-1 sm:col-span-2">
+                  <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">From Time</label>
+                  <input
+                    type="time"
+                    value={fromTime}
+                    onChange={(e) => setFromTime(e.target.value)}
+                    className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+                  />
+                </div>
+                <div className="col-span-1 sm:col-span-2">
+                  <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">To Time</label>
+                  <input
+                    type="time"
+                    value={toTime}
+                    onChange={(e) => setToTime(e.target.value)}
+                    className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+                  />
+                </div>
+              </>
+            )}
 
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Select Month</label>
-                <select
-                  value={filterMonth}
-                  onChange={(e) => setFilterMonth(e.target.value)}
-                  className="px-2 py-1 text-sm border border-gray-300 rounded"
-                >
-                  {months.map(m => (
-                    <option key={m.value} value={m.value}>{m.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 mb-1">Select Year</label>
-                <select
-                  value={filterYear}
-                  onChange={(e) => setFilterYear(e.target.value)}
-                  className="px-2 py-1 text-sm border border-gray-300 rounded"
-                >
-                  {years.map(y => (
-                    <option key={y} value={y}>{y}</option>
-                  ))}
-                </select>
-              </div>
+            <div className="col-span-1 sm:col-span-4 flex justify-end mt-1">
               <button
                 onClick={resetFilters}
-                className="mt-6 px-3 py-2 text-sm bg-red-100 text-red-600 hover:bg-red-200 rounded transition-colors"
-                title="Reset all filters"
+                className="px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-md transition-colors text-[10px] sm:text-xs flex items-center gap-1"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3 h-3" /> Reset
               </button>
             </div>
-            <button
-              onClick={handleDownload}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-transform transform hover:scale-105"
-            >
-              <Download className="w-5 h-5" />
-              <span>Export Excel</span>
-            </button>
           </div>
         </div>
 

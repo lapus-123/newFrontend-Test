@@ -6,18 +6,13 @@ import {
   Search,
   Truck,
   Download,
-  ChevronLeft,
-  ChevronRight,
   Calendar,
   X
 } from 'lucide-react';
 
-const ITEMS_PER_PAGE = 10;
-
 export default function DepartedTrucks() {
   const [drivers, setDrivers] = useState([]);
   const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
   const [showDownloadPopup, setShowDownloadPopup] = useState(false);
 
   // Date Filters
@@ -96,20 +91,12 @@ export default function DepartedTrucks() {
     return match;
   });
 
-  // Pagination logic
-  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
-  const paginatedData = filteredData.slice(
-    (page - 1) * ITEMS_PER_PAGE,
-    page * ITEMS_PER_PAGE
-  );
-
   // Reset all filters
   const resetFilters = () => {
     setFilterSingleDate('');
     setFilterMonth('');
     setFilterYear('');
     setSearch('');
-    setPage(1);
   };
 
   // Export to Excel
@@ -136,70 +123,83 @@ export default function DepartedTrucks() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-purple-600 mb-6">Departed Trucks</h1>
+    <div className="bg-slate-50">
+      <div className="mx-auto">
+        {/* Header */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">
+            <div>
+              <h1 className="text-sm sm:text-base md:text-lg font-bold text-slate-900">Departed Trucks</h1>
+              <p className="text-slate-600 mt-0 text-[10px] sm:text-xs md:text-sm">View and track departed truck records</p>
+            </div>
+            <div>
+              <button
+                onClick={handleDownload}
+                className="flex items-center gap-0.5 sm:gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 rounded-md font-medium transition-colors shadow-sm text-[10px] sm:text-xs md:text-sm min-w-[70px]"
+              >
+                <Download className="w-3 h-3" /> <span>Export Excel</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full sm:w-64">
-            <input
-              type="text"
-              placeholder="Search by Driver or Hauler"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">Select Date</label>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 my-1 sm:my-2 p-1 sm:p-1 md:p-2">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-1 sm:gap-2 md:gap-3">
+            <div className="col-span-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Search</label>
+              <input
+                type="text"
+                placeholder="Search by Driver or Hauler"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
+              />
+            </div>
+            <div className="col-span-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Date</label>
               <input
                 type="date"
                 value={filterSingleDate}
                 onChange={(e) => setFilterSingleDate(e.target.value)}
-                className="px-2 py-1 text-sm border border-gray-300 rounded"
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
               />
             </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">Select Month</label>
+            <div className="col-span-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Month</label>
               <select
                 value={filterMonth}
                 onChange={(e) => setFilterMonth(e.target.value)}
-                className="px-2 py-1 text-sm border border-gray-300 rounded"
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
               >
                 {months.map(m => (
                   <option key={m.value} value={m.value}>{m.label}</option>
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-xs text-gray-500 mb-1">Select Year</label>
+            <div className="col-span-1">
+              <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Year</label>
               <select
                 value={filterYear}
                 onChange={(e) => setFilterYear(e.target.value)}
-                className="px-2 py-1 text-sm border border-gray-300 rounded"
+                className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
               >
+                <option value="">All Years</option>
                 {years.map(y => (
                   <option key={y} value={y}>{y}</option>
                 ))}
               </select>
             </div>
-            <button
-              onClick={resetFilters}
-              className="mt-6 px-3 py-2 text-sm bg-red-100 text-red-600 hover:bg-red-200 rounded transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            
+            <div className="col-span-1 sm:col-span-4 flex justify-end mt-1">
+              <button
+                onClick={resetFilters}
+                className="px-1 py-0.5 sm:px-2 sm:py-1 md:px-2 md:py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-md transition-colors text-[10px] sm:text-xs flex items-center gap-1"
+              >
+                <X className="w-3 h-3" /> Reset
+              </button>
+            </div>
           </div>
-          <button
-            onClick={handleDownload}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-transform transform hover:scale-105"
-          >
-            <Download size={18} />
-            <span>Export Excel</span>
-          </button>
         </div>
 
         {/* Download Popup */}
@@ -210,80 +210,67 @@ export default function DepartedTrucks() {
         )}
 
         {/* No Data Fallback */}
-        {paginatedData.length === 0 ? (
+        {filteredData.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-10 text-center">
             <Truck className="mx-auto w-12 h-12 text-gray-300" />
             <h3 className="mt-4 text-lg font-medium text-gray-700">No departed trucks found</h3>
             <p className="text-sm text-gray-500 mt-1">Try adjusting filters or search.</p>
           </div>
         ) : (
-          <>
-            {/* Table */}
-            <div className="bg-white rounded-xl shadow-md overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hauler</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plate Number#</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure Time</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DN Number</th>
+          <div className="bg-white rounded-xl shadow-md overflow-hidden">
+            {/* Custom scrollbar styles */}
+            <style>
+              {`
+                .custom-scrollbar::-webkit-scrollbar {
+                  width: 8px;
+                  height: 8px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                  background: #f1f5f9;
+                  border-radius: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                  background: #cbd5e1;
+                  border-radius: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                  background: #94a3b8;
+                }
+              `}
+            </style>
+            <div className="overflow-auto max-h-[600px] custom-scrollbar">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-50 sticky top-0 z-10">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Driver</th>
+                    <th className="px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Hauler</th>
+                    <th className="px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Company</th>
+                    <th className="px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Plate Number#</th>
+                    <th className="px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Departure Date</th>
+                    <th className="px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">Departure Time</th>
+                    <th className="px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">DN Number</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-slate-200">
+                  {filteredData.map((d) => (
+                    <tr key={d._id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-[10px] sm:text-xs text-slate-700">{d.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-[10px] sm:text-xs text-slate-700">{d.haulerId?.name || 'N/A'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-[10px] sm:text-xs text-slate-700">{d.companyId?.name || 'N/A'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-[10px] sm:text-xs text-slate-700">{d.plateNumber || 'N/A'}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-[10px] sm:text-xs text-slate-700">
+                        {d.departureTime ? new Date(d.departureTime).toLocaleDateString() : 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-[10px] sm:text-xs text-slate-700">
+                        {d.departureTime ? new Date(d.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-[10px] sm:text-xs text-slate-700">{d.dnNumber || 'N/A'}</td>
                     </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {paginatedData.map((d) => (
-                      <tr key={d._id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.haulerId?.name || 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.companyId?.name || 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.plateNumber || 'N/A'}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {d.departureTime ? new Date(d.departureTime).toLocaleDateString() : 'N/A'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                          {d.departureTime ? new Date(d.departureTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A'}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{d.dnNumber || 'N/A'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+                </tbody>
+              </table>
             </div>
-
-            {/* Pagination */}
-            <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
-              <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
-                disabled={page === 1}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === 1
-                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-purple-600 text-white hover:bg-purple-700'
-                  }`}
-              >
-                <ChevronLeft className="w-5 h-5" />
-                Prev
-              </button>
-              <span className="text-sm text-gray-600">
-                Page <span className="font-semibold">{page}</span> of{' '}
-                <span className="font-semibold">{totalPages}</span>
-              </span>
-              <button
-                onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                disabled={page === totalPages}
-                className={`px-4 py-2 rounded-lg flex items-center gap-2 ${page === totalPages
-                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                  : 'bg-purple-600 text-white hover:bg-purple-700'
-                  }`}
-              >
-                Next
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </>
+          </div>
         )}
       </div>
     </div>

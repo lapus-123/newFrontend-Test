@@ -22,10 +22,10 @@ const sidebarLinks = [
     { label: 'Summary', iconClass: 'bx bxs-pie-chart-alt-2', path: '/admin/summary' }
 ];
 
-function MenuItem({ item, collapsed, isActive, handleLinkClick }) {
+function MenuItem({ item, isActive, handleLinkClick }) {
     if (item.type === 'section') {
         return (
-            <li className={`text-xs uppercase text-gray-400 mt-4 mb-2 px-3 ${collapsed ? 'hidden' : ''}`}>
+            <li className="text-xs uppercase text-gray-400 mt-4 mb-2 px-3 hidden sm:block">
                 {item.label}
             </li>
         );
@@ -39,11 +39,10 @@ function MenuItem({ item, collapsed, isActive, handleLinkClick }) {
                     e.preventDefault();
                     handleLinkClick(item.path);
                 }}
-                className={`flex items-center h-12 rounded-xl transition duration-300 px-3 ${isActive ? 'bg-white text-slate-900' : 'hover:bg-white/10 text-white'
-                    }`}
+                className={`flex items-center h-12 rounded-xl transition duration-300 px-2 sm:px-3 ${isActive ? 'bg-white text-slate-900' : 'hover:bg-white/10 text-white'}`}
             >
-                <i className={`${item.iconClass} text-lg`} style={{ minWidth: '40px', textAlign: 'center' }}></i>
-                <span className={`text-sm transition-opacity duration-300 ${collapsed ? 'hidden' : 'inline'}`}>
+                <i className={`${item.iconClass} text-lg`} style={{ minWidth: '32px', textAlign: 'center' }}></i>
+                <span className="text-xs sm:text-sm transition-opacity duration-300 inline hidden sm:inline">
                     {item.label}
                 </span>
             </a>
@@ -52,7 +51,6 @@ function MenuItem({ item, collapsed, isActive, handleLinkClick }) {
 }
 
 export default function AdminSidebar() {
-    const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
@@ -74,26 +72,22 @@ export default function AdminSidebar() {
     }, [mobileOpen]);
 
     const Sidebar = (
-        <div
-            className={`h-full bg-slate-900 text-white transition-all duration-300 flex flex-col ${collapsed ? 'w-16' : 'w-64'
-                }`}
-        >
+        <div className="h-full bg-slate-900 text-white transition-all duration-300 flex flex-col w-16 sm:w-64">
             {/* Header */}
-            <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
-                {!collapsed && <span className="text-lg font-semibold">Truck Management</span>}
-                <i
-                    className={`bx cursor-pointer text-2xl ${collapsed ? 'bx-menu' : 'bx-menu-alt-right'}`}
-                    onClick={() => setCollapsed(!collapsed)}
-                ></i>
+            <div className="h-16 flex items-center justify-center sm:justify-between px-2 sm:px-6 border-b border-white/10">
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/10473/10473350.png"
+                    style={{ width: '32px', height: '32px', }}
+                />
+                <span className="text-xs sm:text-lg font-semibold ml-2 hidden sm:inline">Truck Management</span>
             </div>
 
             {/* Links */}
-            <ul className="flex-1 overflow-auto px-2">
+            <ul className="flex-1 overflow-auto px-1 sm:px-2">
                 {sidebarLinks.map((item, idx) => (
                     <MenuItem
                         key={item.path ? item.label + item.path : `section-${item.label}-${idx}`}
                         item={item}
-                        collapsed={collapsed}
                         isActive={item.path ? isActive(item.path) : false}
                         handleLinkClick={handleLinkClick}
                     />
@@ -101,14 +95,14 @@ export default function AdminSidebar() {
             </ul>
 
             {/* Logout + Footer */}
-            <div className="px-4 py-4 bg-gray-800 flex flex-col items-center gap-3">
+            <div className="px-2 sm:px-4 py-2 sm:py-4 bg-gray-800 flex flex-col items-center gap-2 sm:gap-3">
                 <button
                     onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-lg w-full"
+                    className="bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-medium px-2 sm:px-4 py-2 rounded-lg w-full"
                 >
                     Logout
                 </button>
-                <div className="text-center text-xs text-gray-300">Truck Management System</div>
+                <div className="text-center text-xs text-gray-300 hidden sm:block">Truck Management System</div>
             </div>
         </div>
     );
