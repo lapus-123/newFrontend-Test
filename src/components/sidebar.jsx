@@ -10,10 +10,10 @@ const sidebarLinks = [
 // Define known paths for validation
 const validPaths = new Set(sidebarLinks.filter(item => item.path).map(item => item.path));
 
-function MenuItem({ item, collapsed, isActive, handleLinkClick }) {
+function MenuItem({ item, isActive, handleLinkClick }) {
   if (item.type === 'section') {
     return (
-      <li className={`text-xs uppercase text-gray-400 mt-4 mb-2 px-3 ${collapsed ? 'hidden' : ''}`}>
+      <li className="text-xs uppercase text-gray-400 mt-4 mb-2 px-3">
         {item.label}
       </li>
     );
@@ -34,7 +34,7 @@ function MenuItem({ item, collapsed, isActive, handleLinkClick }) {
           className={`${item.iconClass} text-lg`}
           style={{ minWidth: '40px', textAlign: 'center' }}
         ></i>
-        <span className={`text-sm transition-opacity duration-300 ${collapsed ? 'hidden' : 'inline'}`}>
+        <span className="text-sm transition-opacity duration-300">
           {item.label}
         </span>
       </a>
@@ -43,7 +43,6 @@ function MenuItem({ item, collapsed, isActive, handleLinkClick }) {
 }
 
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -66,17 +65,10 @@ export default function Sidebar() {
   }, [mobileOpen]);
 
   const Sidebar = (
-    <div
-      className={`h-full bg-slate-900 text-white transition-all duration-300 flex flex-col ${collapsed ? 'w-16' : 'w-64'
-        }`}
-    >
+    <div className="h-full bg-slate-900 text-white transition-all duration-300 flex flex-col w-64">
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
-        {!collapsed && <span className="text-lg font-semibold">Truck Management</span>}
-        <i
-          className={`bx cursor-pointer text-2xl ${collapsed ? 'bx-menu' : 'bx-menu-alt-right'}`}
-          onClick={() => setCollapsed(!collapsed)}
-        ></i>
+        <span className="text-lg font-semibold">Truck Management</span>
       </div>
 
       {/* Links */}
@@ -85,7 +77,6 @@ export default function Sidebar() {
           <MenuItem
             key={item.path ? item.label + item.path : `section-${item.label}-${idx}`}
             item={item}
-            collapsed={collapsed}
             isActive={item.path ? isActive(item.path) : false}
             handleLinkClick={handleLinkClick}
           />
@@ -127,7 +118,7 @@ export default function Sidebar() {
               className="fixed inset-0 z-40 bg-black bg-opacity-50"
               onClick={() => setMobileOpen(false)}
             ></div>
-            <div className="fixed z-50 h-full bg-slate-900 text-white w-64">{Sidebar}</div>
+            <div className="fixed z-50 h-full left-0 top-0 bg-slate-900 text-white w-64">{Sidebar}</div>
           </>
         )}
       </div>
