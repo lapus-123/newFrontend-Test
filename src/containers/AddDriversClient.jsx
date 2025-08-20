@@ -424,6 +424,9 @@ export default function AddDriverClient() {
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                         </thead>
+                    
+                    
+                        {/*edit what's inside the records table is here*/}
                         <tbody className="divide-y divide-slate-200">
                             {finalFilteredLogs.length > 0 ? (
                                 finalFilteredLogs.map((rec) => (
@@ -516,6 +519,8 @@ export default function AddDriverClient() {
                                 </tr>
                             )}
                         </tbody>
+                        {/*end  of what's inside the records table is here*/}
+
                     </table>
                     </div>
                 </div>
