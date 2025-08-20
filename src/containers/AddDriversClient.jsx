@@ -411,17 +411,17 @@ export default function AddDriverClient() {
                     <table className="w-full min-w-[700px] text-[10px] sm:text-xs md:text-sm">
                         <thead className="bg-slate-50 border-b border-slate-800 sticky top-0 z-10">
                             <tr>
-                                <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Driver</th>
-                                    <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Plate</th>
-                                    <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
-                                    <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Truck</th>
-                                    <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Hauler</th>
-                                    <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Arr.</th>
-                                    <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Dep.</th>
-                                    <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Dest.</th>
-                                    <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Products</th>
-                                    <th className="text-left px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">DN</th>
-                                    <th className="text-right px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                                <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Driver</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Plate</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Truck</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Hauler</th>
+                                    <th className="text-center sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[8px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Arr.</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Dep.</th>
+                                    <th className="text-center sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[8px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Dest.</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Products</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">DN</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200">
@@ -440,32 +440,34 @@ export default function AddDriverClient() {
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.plateNumber || '—'}</td>
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.companyId?.name || rec.company || '—'}</td>
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.truckTypeId?.type || rec.truckType || '—'}</td>
-                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.haulerId?.name || rec.hauler || '—'}</td>
-                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600 text-center ">{rec.haulerId?.name || rec.hauler || '—'}</td>
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-center">
                                             {rec.arrivalTime ? (
-                                                <span className="inline-flex items-center gap-0.5 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-emerald-100 text-emerald-700">
-                                                    <div className="w-1 h-1 bg-emerald-600 rounded-full"></div>
+                                                <span className="inline-flex text-center gap-0.5 py-0.5 sm:px-1.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-emerald-100 text-emerald-700">
+                                                  {/*  <div className="w-1 h-1 bg-emerald-600 rounded-full"></div> */} {/*this is the bullet*/}
                                                     {rec.arrivalTime}
                                                 </span>
                                             ) : (
                                                 <span className="text-slate-400">—</span>
                                             )}
                                         </td>
-                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1">
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-center">
                                             {rec.departureTime ? (
-                                                <span className="inline-flex items-center gap-0.5 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-blue-100 text-blue-700">
-                                                    <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
+                                                <span className="inline-flex text-center gap-0.5 px-1 py-0.5 sm:px-1.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-blue-100 text-blue-700">
+                                                {/*this is the bullet*/}
                                                     {rec.departureTime}
                                                 </span>
-                                            ) : (
-                                                <span className="text-slate-400">—</span>
-                                            )}
-                                        </td>
-                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.destination || '—'}</td>
-                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">
-                                            {rec.products?.length > 0 ? (
-                                                <ul className="space-y-0.5">
-                                                    {rec.products.map((p, idx) => {
+                                                ) : (
+                                                    <span className="text-slate-400 text-center">—</span>
+                                                )}
+                                                </td>
+                                                <td className="text-slate-600 text-center max-w-[80px] " title={rec.destination}>
+                                                    {rec.destination ? rec.destination : '—'}
+                                                </td>
+                                                <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-center text-slate-600">
+                                                    {rec.products?.length > 0 ? (
+                                                        <ul className="space-y-0.5 text-center">
+                                                            {rec.products.map((p, idx) => {
                                                         const productName = typeof p.productId === 'object'
                                                             ? p.productId?.name || 'Unknown Product'
                                                             : products.find(prod => prod._id === p.productId)?.name || 'Unknown Product';
@@ -478,7 +480,7 @@ export default function AddDriverClient() {
                                                 '—'
                                             )}
                                         </td>
-                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.dnNumber || '—'}</td>
+                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600 text-center">{rec.dnNumber || '—'}</td>
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 whitespace-nowrap text-right text-[10px] sm:text-xs md:text-sm font-medium space-x-0.5 sm:space-x-1">
                                             <button
                                                 onClick={() => handleRecordDeparture(rec)}
