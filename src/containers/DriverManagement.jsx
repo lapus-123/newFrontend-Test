@@ -356,7 +356,6 @@ export default function DriverManagement() {
     return (
         /*removed the margins and paddings:  p-1 sm:p-2 md:p-3 lg:p-4*/
     <div className=" bg-slate-50">
-
             {/* Header */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-1 sm:p-2 md:p-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-1 md:gap-2">

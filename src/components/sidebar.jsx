@@ -65,23 +65,29 @@ export default function Sidebar() {
   }, [mobileOpen]);
 
   const Sidebar = (
-    <div className="h-full bg-slate-900 text-white transition-all duration-300 flex flex-col w-64">
-      {/* Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
-        <span className="text-lg font-semibold">Truck Management</span>
-      </div>
+        <div className="h-full bg-slate-900 text-white transition-all duration-300 flex flex-col w-64">
+            {/* Header */}
+            <div className="h-16 flex items-center justify-between px-4 border-b border-white/10">
+                <div className="flex items-center">
+                    <img
+                        src="https://cdn-icons-png.flaticon.com/512/10473/10473350.png"
+                        style={{ width: '32px', height: '32px' }}
+                    />
+                    <span className="text-lg font-semibold ml-2">Truck Management</span>
+                </div>
+            </div>
 
-      {/* Links */}
-      <ul className="flex-1 overflow-auto px-2">
-        {sidebarLinks.map((item, idx) => (
-          <MenuItem
-            key={item.path ? item.label + item.path : `section-${item.label}-${idx}`}
-            item={item}
-            isActive={item.path ? isActive(item.path) : false}
-            handleLinkClick={handleLinkClick}
-          />
-        ))}
-      </ul>
+            {/* Links */}
+            <ul className="flex-1 overflow-auto px-2">
+                {sidebarLinks.map((item, idx) => (
+                    <MenuItem
+                        key={item.path ? item.label + item.path : `section-${item.label}-${idx}`}
+                        item={item}
+                        isActive={item.path ? isActive(item.path) : false}
+                        handleLinkClick={handleLinkClick}
+                    />
+                ))}
+            </ul>
 
       {/* Logout + Footer */}
       <div className="px-4 py-4 bg-gray-800 flex flex-col items-center gap-3">
