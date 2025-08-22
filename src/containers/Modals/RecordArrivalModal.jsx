@@ -7,7 +7,7 @@ const RecordArrivalModal = ({
     driversData,
     selectedDriver,
     setSelectedDriver,
-    trucks,
+   // trucks,
     formData,
     setFormData,
     handleInputChange,
@@ -163,6 +163,7 @@ const RecordArrivalModal = ({
                         </div>
 
                         {/* Truck Type (Editable) */}
+                        {/*
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">
                                 Truck Type <span className="text-xs text-slate-500">(Optional)</span>
@@ -181,7 +182,7 @@ const RecordArrivalModal = ({
                                 ))}
                             </select>
                         </div>
-                        
+                        */}
 
 
 

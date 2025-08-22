@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Search, Clock, Truck, User,
+    Search, Clock,/* Truck,*/ User,
     ArrowRight, Plus, Calendar, X, Edit, Trash2, Download
 } from 'lucide-react';
 import axios from '../utils/axios';
@@ -15,7 +15,7 @@ export default function DriverManagement() {
     const [driversData, setDriversData] = useState([]);
     const [driverLogs, setDriverLogs] = useState([]);
     const [companies, setCompanies] = useState([]);
-    const [trucks, setTrucks] = useState([]);
+//    const [trucks, setTrucks] = useState([]);
     const [products, setProducts] = useState([]);
     const [mode, setMode] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -29,8 +29,8 @@ export default function DriverManagement() {
         companyId: '',
         hauler: '',
         haulerId: '',
-        truckType: '',
-        truckTypeId: '',
+     //   truckType: '',
+      //  truckTypeId: '',
         arrivalTime: '',
         departureTime: '',
         destination: '',
@@ -47,7 +47,7 @@ export default function DriverManagement() {
         fetchDriversData();
         fetchDriverLogs();
         fetchCompanies();
-        fetchTrucks();
+     //   fetchTrucks();
         fetchProducts();
     }, []);
 
@@ -79,6 +79,7 @@ export default function DriverManagement() {
         }
     };
 
+{/* 
     const fetchTrucks = async () => {
         try {
             const res = await axios.get('/api/trucks');
@@ -87,6 +88,7 @@ export default function DriverManagement() {
             console.error('Failed to fetch trucks:', err);
         }
     };
+*/}
 
     const fetchProducts = async () => {
         try {
@@ -118,8 +120,8 @@ export default function DriverManagement() {
             companyId: '',
             hauler: '',
             haulerId: '',
-            truckType: '',
-            truckTypeId: '',
+            //truckType: '',
+           // truckTypeId: '',
             arrivalTime: type === 'arrival' ? getFormattedTimestamp() : '',
             departureTime: type === 'departure' ? getFormattedTimestamp() : '',
             destination: '',
@@ -198,14 +200,14 @@ export default function DriverManagement() {
             return;
         }
         const selectedCompany = companies.find(c => c.name === formData.company);
-        const selectedTruck = trucks.find(t => t.type === formData.truckType);
+    //    const selectedTruck = trucks.find(t => t.type === formData.truckType);
         const payload = {
             driverDataId: selectedDriver._id,
             name: selectedDriver.name,
             plateNumber: formData.plateNumber || null,
             company: formData.company || '',
             companyId: selectedCompany?._id || null,
-            truckTypeId: selectedTruck?._id || null,
+         //   truckTypeId: selectedTruck?._id || null,
             haulerId: formData.haulerId || null,
             products: formData.products,
             dnNumber: formData.dnNumber || '',
@@ -248,7 +250,7 @@ export default function DriverManagement() {
             Driver: rec.name,
             'Plate Number': rec.plateNumber || '—',
             Company: rec.companyId?.name || rec.company || '—',
-            'Truck Type': rec.truckTypeId?.type || rec.truckType || '—',
+          //  'Truck Type': rec.truckTypeId?.type || rec.truckType || '—',
             Hauler: rec.haulerId?.name || rec.hauler || '—',
             'Arrival Time': rec.arrivalTime || '—',
             'Departure Time': rec.departureTime || '—',
@@ -301,8 +303,8 @@ export default function DriverManagement() {
             companyId: rec.companyId || null,
             hauler: rec.haulerId?.name || rec.hauler || '',
             haulerId: rec.haulerId || null,
-            truckType: rec.truckTypeId?.type || rec.truckType || '',
-            truckTypeId: rec.truckTypeId || null,
+      //      truckType: rec.truckTypeId?.type || rec.truckType || '',
+      //      truckTypeId: rec.truckTypeId || null,
             arrivalTime: rec.arrivalTime || '',
             departureTime: rec.departureTime || '',
             destination: rec.destination || '',
@@ -322,8 +324,8 @@ export default function DriverManagement() {
             companyId: rec.companyId || null,
             hauler: rec.haulerId?.name || rec.hauler || '',
             haulerId: rec.haulerId || null,
-            truckType: rec.truckTypeId?.type || rec.truckType || '',
-            truckTypeId: rec.truckTypeId || null,
+       //     truckType: rec.truckTypeId?.type || rec.truckType || '',
+       //     truckTypeId: rec.truckTypeId || null,
             arrivalTime: rec.arrivalTime || '',
             departureTime: getFormattedTimestamp(),
             destination: rec.destination || '',
@@ -336,8 +338,8 @@ export default function DriverManagement() {
     const unifiedFilteredLogs = searchTerm
         ? driverLogs.filter(log =>
             log.name?.toLowerCase().includes(searchTerm) ||
-            (log.companyId?.name || log.company || '').toLowerCase().includes(searchTerm) ||
-            (log.truckTypeId?.type || log.truckType || '').toLowerCase().includes(searchTerm)
+            (log.companyId?.name || log.company || '').toLowerCase().includes(searchTerm) //||
+      //      (log.truckTypeId?.type || log.truckType || '').toLowerCase().includes(searchTerm)
         )
         : driverLogs;
 
@@ -419,7 +421,7 @@ export default function DriverManagement() {
                                 <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Driver</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Plate</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
-                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Truck</th>
+                                    {/*   <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Truck</th> */}
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Hauler</th>
                                     <th className="text-center sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[8px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Arrival</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Departure</th>
@@ -446,7 +448,7 @@ export default function DriverManagement() {
                                         </td>
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.plateNumber || '—'}</td>
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.companyId?.name || rec.company || '—'}</td>
-                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.truckTypeId?.type || rec.truckType || '—'}</td>
+                                    {/*    <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.truckTypeId?.type || rec.truckType || '—'}</td> */}
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600 text-center ">{rec.haulerId?.name || rec.hauler || '—'}</td>
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-center">
                                             {rec.arrivalTime ? (
@@ -512,6 +514,7 @@ export default function DriverManagement() {
                                 ))
                             ) : (
                                 <tr>
+                                    {/*        
                                     <td colSpan="11" className="px-1 sm:px-1 md:px-2 py-2 sm:py-4 md:py-6 text-center">
                                         <div className="flex flex-col items-center gap-0.5 sm:gap-1">
                                             <div className="bg-slate-100 p-0.5 sm:p-1 md:p-2 rounded-full">
@@ -520,8 +523,12 @@ export default function DriverManagement() {
                                             <p className="text-slate-500 font-medium text-[10px] sm:text-xs md:text-sm">No records found</p>
                                         </div>
                                     </td>
+                                    */}
                                 </tr>
+                                
                             )}
+
+                            
                         </tbody>
                         {/*end  of what's inside the records table is here*/}
 
@@ -542,7 +549,7 @@ export default function DriverManagement() {
                     selectedDriver={selectedDriver}
                     setSelectedDriver={setSelectedDriver}
                     companies={companies}
-                    trucks={trucks}
+            //        trucks={trucks}
                     products={products}
                     formData={formData}
                     setFormData={setFormData}
@@ -560,7 +567,7 @@ export default function DriverManagement() {
                     setShowModal={setShowModal}
                     selectedDriver={selectedDriver}
                     companies={companies}
-                    trucks={trucks}
+                  //  trucks={trucks}
                     products={products}
                     formData={formData}
                     setFormData={setFormData}

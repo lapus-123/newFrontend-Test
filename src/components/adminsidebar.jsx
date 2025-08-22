@@ -8,7 +8,7 @@ const sidebarLinks = [
     { type: 'section', label: 'Add Section' },
     { label: 'Add Driver', iconClass: 'bx bxs-user-plus', path: '/admin/add-driver' },
     { label: 'Add Hauler', iconClass: 'bx bxs-truck', path: '/admin/add-hauler' },
-    { label: 'Add Truck Type', iconClass: 'bx bxs-truck', path: '/admin/add-truck-type' },
+    //{ label: 'Add Truck Type', iconClass: 'bx bxs-truck', path: '/admin/add-truck-type' },
     { label: 'Add Company', iconClass: 'bx bxs-buildings', path: '/admin/add-company' },
     { label: 'Add Product', iconClass: 'bx bxs-package', path: '/admin/add-product' },
 

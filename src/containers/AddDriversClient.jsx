@@ -15,7 +15,7 @@ export default function AddDriverClient() {
     const [driversData, setDriversData] = useState([]);
     const [driverLogs, setDriverLogs] = useState([]);
     const [companies, setCompanies] = useState([]);
-    const [trucks, setTrucks] = useState([]);
+  //  const [trucks, setTrucks] = useState([]);
     const [products, setProducts] = useState([]);
     const [mode, setMode] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -29,8 +29,8 @@ export default function AddDriverClient() {
         companyId: '',
         hauler: '',
         haulerId: '',
-        truckType: '',
-        truckTypeId: '',
+      //  truckType: '',
+     //   truckTypeId: '',
         arrivalTime: '',
         departureTime: '',
         destination: '',
@@ -47,7 +47,7 @@ export default function AddDriverClient() {
         fetchDriversData();
         fetchDriverLogs();
         fetchCompanies();
-        fetchTrucks();
+     //   fetchTrucks();
         fetchProducts();
     }, []);
 
@@ -79,6 +79,7 @@ export default function AddDriverClient() {
         }
     };
 
+{/*
     const fetchTrucks = async () => {
         try {
             const res = await axios.get('/api/trucks');
@@ -87,6 +88,7 @@ export default function AddDriverClient() {
             console.error('Failed to fetch trucks:', err);
         }
     };
+*/}
 
     const fetchProducts = async () => {
         try {
@@ -118,8 +120,8 @@ export default function AddDriverClient() {
             companyId: '',
             hauler: '',
             haulerId: '',
-            truckType: '',
-            truckTypeId: '',
+     //       truckType: '',
+       //     truckTypeId: '',
             arrivalTime: type === 'arrival' ? getFormattedTimestamp() : '',
             departureTime: type === 'departure' ? getFormattedTimestamp() : '',
             destination: '',
@@ -216,7 +218,7 @@ export default function AddDriverClient() {
         }
 
         const selectedCompany = companies.find(c => c.name === formData.company);
-        const selectedTruck = formData.truckType ? trucks.find(t => t.type === formData.truckType) : null;
+     //   const selectedTruck = formData.truckType ? trucks.find(t => t.type === formData.truckType) : null;
         
         const payload = {
             driverDataId: selectedDriver._id,
@@ -224,8 +226,8 @@ export default function AddDriverClient() {
             plateNumber: formData.plateNumber,
             company: formData.company,
             companyId: selectedCompany?._id,
-            truckTypeId: selectedTruck?._id, // Will be undefined if no truck type selected
-            truckType: formData.truckType || '', // Send empty string if no truck type
+      //      truckTypeId: selectedTruck?._id, // Will be undefined if no truck type selected
+     //       truckType: formData.truckType || '', // Send empty string if no truck type
             haulerId: formData.haulerId,
             products: formData.products || [],
             dnNumber: formData.dnNumber || '',
@@ -268,7 +270,7 @@ export default function AddDriverClient() {
             Driver: rec.name,
             'Plate Number': rec.plateNumber || '—',
             Company: rec.companyId?.name || rec.company || '—',
-            'Truck Type': rec.truckTypeId?.type || rec.truckType || '—',
+        //    'Truck Type': rec.truckTypeId?.type || rec.truckType || '—',
             Hauler: rec.haulerId?.name || rec.hauler || '—',
             'Arrival Time': rec.arrivalTime || '—',
             'Departure Time': rec.departureTime || '—',
@@ -321,8 +323,8 @@ export default function AddDriverClient() {
             companyId: rec.companyId || null,
             hauler: rec.haulerId?.name || rec.hauler || '',
             haulerId: rec.haulerId || null,
-            truckType: rec.truckTypeId?.type || rec.truckType || '',
-            truckTypeId: rec.truckTypeId || null,
+        //    truckType: rec.truckTypeId?.type || rec.truckType || '',
+       //     truckTypeId: rec.truckTypeId || null,
             arrivalTime: rec.arrivalTime || '',
             departureTime: rec.departureTime || '',
             destination: rec.destination || '',
@@ -342,8 +344,8 @@ export default function AddDriverClient() {
             companyId: rec.companyId || null,
             hauler: rec.haulerId?.name || rec.hauler || '',
             haulerId: rec.haulerId || null,
-            truckType: rec.truckTypeId?.type || rec.truckType || '',
-            truckTypeId: rec.truckTypeId || null,
+          //  truckType: rec.truckTypeId?.type || rec.truckType || '',
+         //   truckTypeId: rec.truckTypeId || null,
             arrivalTime: rec.arrivalTime || '',
             departureTime: getFormattedTimestamp(),
             destination: rec.destination || '',
@@ -356,8 +358,8 @@ export default function AddDriverClient() {
     const unifiedFilteredLogs = searchTerm
         ? driverLogs.filter(log =>
             log.name?.toLowerCase().includes(searchTerm) ||
-            (log.companyId?.name || log.company || '').toLowerCase().includes(searchTerm) ||
-            (log.truckTypeId?.type || log.truckType || '').toLowerCase().includes(searchTerm)
+            (log.companyId?.name || log.company || '').toLowerCase().includes(searchTerm) //||
+        //    (log.truckTypeId?.type || log.truckType || '').toLowerCase().includes(searchTerm)
         )
         : driverLogs;
 
@@ -400,7 +402,7 @@ export default function AddDriverClient() {
                     <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Search</label>
                     <input
                         type="text"
-                        placeholder="Search by Driver, Company, or Truck Type..."
+                        placeholder="Search by Driver or Company..."
                         value={searchTerm}
                         onChange={handleSearch}
                         className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
@@ -434,7 +436,7 @@ export default function AddDriverClient() {
                                 <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Driver</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Plate</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
-                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Truck</th>
+                                {/*   <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Truck</th>*/} 
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Hauler</th>
                                     <th className="text-center sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[8px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Arr.</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Dep.</th>
@@ -462,7 +464,7 @@ export default function AddDriverClient() {
                                         </td>
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.plateNumber || '—'}</td>
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.companyId?.name || rec.company || '—'}</td>
-                                        <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.truckTypeId?.type || rec.truckType || '—'}</td>
+                                        {/* <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600">{rec.truckTypeId?.type || rec.truckType || '—'}</td> */}
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-slate-600 text-center ">{rec.haulerId?.name || rec.hauler || '—'}</td>
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-center">
                                             {rec.arrivalTime ? (
@@ -559,7 +561,7 @@ export default function AddDriverClient() {
                     selectedDriver={selectedDriver}
                     setSelectedDriver={setSelectedDriver}
                     companies={companies}
-                    trucks={trucks}
+                    //trucks={trucks}
                     products={products}
                     formData={formData}
                     setFormData={setFormData}
@@ -577,7 +579,7 @@ export default function AddDriverClient() {
                     setShowModal={setShowModal}
                     selectedDriver={selectedDriver}
                     companies={companies}
-                    trucks={trucks}
+                //    trucks={trucks}
                     products={products}
                     formData={formData}
                     setFormData={setFormData}
