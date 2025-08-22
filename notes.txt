@@ -1,0 +1,87 @@
+=============OVER ALL WORK===============
+TO DO LIST
+- PROGRAMMING
+BACKEND
+1. Add Remarks POST AND FETCH
+2. Statistics in Summary - Make it more understandable and accurate 
+
+FRONTEND
+1. Add Remarks TextField & Submit Button (Add API)
+2. Make Plate Number Required
+3. Remove Truck Type on all (Admin and Guard) - Optional
+
+- Paper Works
+1. Auditing
+- Video Editing
+1. Download all files
+2. Edit on either Canva / Capcut / Da Vinci
+============JANICA NOTES:===============
+
+Gmail MongoDB and Render Account:
+lapusshell@gmail.com
+password: t14armatapanzer2
+
+
+
+NOTES:
+https://newfrontend-test.onrender.com/
+
+
+to run frontend Localhost : npm run dev
+
+
+
+=============BRYCE NOTES:================
+
+PS C:\Users\PC\Desktop\tas-frontend> git remote -v
+origin  https://github.com/lapus-123/Lapuz-Truck-Management-Stystem.git (fetch)
+origin  https://github.com/lapus-123/Lapuz-Truck-Management-Stystem.git (push) 
+PS C:\Users\PC\Desktop\tas-frontend> git remote remove origin; git remote add origin https://github.com/lapus-123/newFrontend-Test.git
+PS C:\Users\PC\Desktop\tas-frontend> 
+
+
+
+1.) Open Mongodb in the Brave Browser search Mongodb Atlas
+2.) To log in type lapusshell@gmail.com and password (t14armatapanzer2)
+3.) after loading click send code and proceed to the gmail
+4.) Log in to lapusshell@gmail.com and same password
+5.) find the code sent by Mongodb and paste it on the Mongodb
+6.) wait for the loading to finish
+7.) Below the Atlas Logo in the Mongodb click and find the "fileinventffffff"
+8.) Wait a liitle bit for the prompt saying connect to network or connect IP then click.
+
+--End--
+
+
+9.) Open Visual studio Code then find file in the Tab Bar above.
+10.) Click and Open folder
+11.) find the Location of your folder containing the Code of the system
+12.) in the Terminal in the Tab Bar above click and click new Terminal.
+13.) A Terminal pop up below and Input the following:
+
+     :  npm Express cors multer dotenv cloudinary body-parser
+
+example: PS C:\Users\PC\Desktop\Fileinventory29-07-main> npm install express cors
+                                                                   ^
+                                                                   |
+                                                                   |
+
+                                                             (input here)         
+
+14.) then wait until finish loading
+15.) after finish loading input the following:
+
+     : npm start
+
+16.) wait until finish loading with a check saying MongoDB connected and Server Running on http://localhost:5000
+
+17.) after that go to explorer in the left side of the Visual Studio code find the public folder then find Index.html
+18.) right click then copy path.
+19.) go to Brave browser or Google Chrome then paste the copy path in the search bar above.
+20.) wait for it to load then Enjoy.
+
+
+--END--
+
+
+

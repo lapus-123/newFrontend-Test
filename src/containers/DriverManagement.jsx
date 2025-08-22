@@ -421,11 +421,11 @@ export default function DriverManagement() {
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Company</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Truck</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Hauler</th>
-                                    <th className="text-center sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[8px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Arr.</th>
-                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Dep.</th>
-                                    <th className="text-center sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[8px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Dest.</th>
+                                    <th className="text-center sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[8px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Arrival</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Departure</th>
+                                    <th className="text-center sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[8px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Destination</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-small text-slate-500 uppercase tracking-wider">Products</th>
-                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">DN</th>
+                                    <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">DN No.</th>
                                     <th className="text-center px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                         </thead>
