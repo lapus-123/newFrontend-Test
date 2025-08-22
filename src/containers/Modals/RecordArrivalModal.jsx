@@ -7,7 +7,7 @@ const RecordArrivalModal = ({
     driversData,
     selectedDriver,
     setSelectedDriver,
-    //trucks,
+    trucks,
     formData,
     setFormData,
     handleInputChange,
@@ -60,7 +60,7 @@ const RecordArrivalModal = ({
             companyId: driver.companyId?._id || driver.companyId || null,
             hauler: driver.haulerId?.name || driver.hauler || '',
             haulerId: driver.haulerId?._id || driver.haulerId || null,
-           // truckType: driver.truckType || '',
+            truckType: driver.truckType || '',
             plateNumber: driver.plateNumber || '',
         }));
     };
@@ -162,7 +162,7 @@ const RecordArrivalModal = ({
                             />
                         </div>
 
-                        {/* Truck Type (Editable) 
+                        {/* Truck Type (Editable) */}
                         <div className="space-y-2">
                             <label className="text-sm font-medium text-slate-700">Truck Type</label>
                             <select
@@ -179,7 +179,7 @@ const RecordArrivalModal = ({
                                 ))}
                             </select>
                         </div>
-                        */}
+                        
 
 
 
