@@ -30,7 +30,7 @@ export default function AddDriverClient() {
         hauler: '',
         haulerId: '',
         truckType: '',
-       truckTypeId: '',
+        truckTypeId: '',
         arrivalTime: '',
         departureTime: '',
         destination: '',
@@ -79,7 +79,6 @@ export default function AddDriverClient() {
         }
     };
 
-   
     const fetchTrucks = async () => {
         try {
             const res = await axios.get('/api/trucks');
@@ -88,7 +87,6 @@ export default function AddDriverClient() {
             console.error('Failed to fetch trucks:', err);
         }
     };
-   
 
     const fetchProducts = async () => {
         try {
@@ -121,7 +119,7 @@ export default function AddDriverClient() {
             hauler: '',
             haulerId: '',
             truckType: '',
-         truckTypeId: '',
+            truckTypeId: '',
             arrivalTime: type === 'arrival' ? getFormattedTimestamp() : '',
             departureTime: type === 'departure' ? getFormattedTimestamp() : '',
             destination: '',
@@ -325,7 +323,7 @@ export default function AddDriverClient() {
             hauler: rec.haulerId?.name || rec.hauler || '',
             haulerId: rec.haulerId || null,
             truckType: rec.truckTypeId?.type || rec.truckType || '',
-           truckTypeId: rec.truckTypeId || null,
+            truckTypeId: rec.truckTypeId || null,
             arrivalTime: rec.arrivalTime || '',
             departureTime: getFormattedTimestamp(),
             destination: rec.destination || '',
@@ -382,7 +380,7 @@ export default function AddDriverClient() {
                     <label className="block text-[10px] sm:text-xs font-medium text-slate-700 mb-0.5">Search</label>
                     <input
                         type="text"
-                        placeholder="Search by Driver or Company..."
+                        placeholder="Search by Driver, Company, or Truck Type..."
                         value={searchTerm}
                         onChange={handleSearch}
                         className="w-full px-1 py-0.5 sm:px-1 sm:py-1 md:px-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-[10px] sm:text-xs"
@@ -402,7 +400,7 @@ export default function AddDriverClient() {
 
             </div>
 
-            {/* Records Table */} 
+            {/* Records Table */}
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200">
                     <div className="px-1 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2 border-b border-slate-200">
                         <h2 className="text-[10px] sm:text-xs md:text-sm font-semibold text-slate-900">Recent Records</h2>
@@ -449,7 +447,7 @@ export default function AddDriverClient() {
                                         <td className="px-1 sm:px-1 md:px-2 py-0.5 sm:py-1 md:py-1 text-center">
                                             {rec.arrivalTime ? (
                                                 <span className="inline-flex text-center gap-0.5 py-0.5 sm:px-1.5 sm:py-0.5 rounded-full text-[10px] sm:text-xs font-medium bg-emerald-100 text-emerald-700">
-                                                    <div className="w-1 h-1 bg-emerald-600 rounded-full"></div> {/*this is the bullet*/}
+                                                  {/*  <div className="w-1 h-1 bg-emerald-600 rounded-full"></div> */} {/*this is the bullet*/}
                                                     {rec.arrivalTime}
                                                 </span>
                                             ) : (
@@ -513,7 +511,7 @@ export default function AddDriverClient() {
                                     <td colSpan="11" className="px-1 sm:px-1 md:px-2 py-2 sm:py-4 md:py-6 text-center">
                                         <div className="flex flex-col items-center gap-0.5 sm:gap-1">
                                             <div className="bg-slate-100 p-0.5 sm:p-1 md:p-2 rounded-full">
-                                               <Truck className="w-4 h-4 text-slate-400" /> 
+                                                <Truck className="w-4 h-4 text-slate-400" />
                                             </div>
                                             <p className="text-slate-500 font-medium text-[10px] sm:text-xs md:text-sm">No records found</p>
                                         </div>
@@ -541,7 +539,7 @@ export default function AddDriverClient() {
                     selectedDriver={selectedDriver}
                     setSelectedDriver={setSelectedDriver}
                     companies={companies}
-                  trucks={trucks}
+                    trucks={trucks}
                     products={products}
                     formData={formData}
                     setFormData={setFormData}
@@ -559,7 +557,7 @@ export default function AddDriverClient() {
                     setShowModal={setShowModal}
                     selectedDriver={selectedDriver}
                     companies={companies}
-                  trucks={trucks}
+                    trucks={trucks}
                     products={products}
                     formData={formData}
                     setFormData={setFormData}
