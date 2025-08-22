@@ -164,7 +164,9 @@ const RecordArrivalModal = ({
 
                         {/* Truck Type (Editable) */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-700">Truck Type</label>
+                            <label className="text-sm font-medium text-slate-700">
+                                Truck Type <span className="text-xs text-slate-500">(Optional)</span>
+                            </label>
                             <select
                                 name="truckType"
                                 value={formData.truckType}
@@ -185,7 +187,9 @@ const RecordArrivalModal = ({
 
                         {/* Plate Number (Editable) */}
                         <div className="space-y-2 md:col-span-2">
-                            <label className="text-sm font-medium text-slate-700">Plate Number</label>
+                            <label className="text-sm font-medium text-slate-700">
+                                Plate Number <span className="text-xs text-red-500">*Required</span>
+                            </label>
                             <input
                                 type="text"
                                 name="plateNumber"
@@ -239,7 +243,14 @@ const RecordArrivalModal = ({
                             </button>
                             <button
                                 onClick={handleSubmit}
-                                disabled={!selectedDriver || isDuplicate}
+                                disabled={
+                                    !selectedDriver || 
+                                    isDuplicate || 
+                                    !formData.plateNumber || 
+                                    !formData.company || 
+                                    !formData.hauler || 
+                                    !formData.arrivalTime
+                                }
                                 className={`px-6 py-2 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${isDuplicate ? 'bg-gray-400' : 'bg-emerald-600 hover:bg-emerald-700'
                                     }`}
                             >

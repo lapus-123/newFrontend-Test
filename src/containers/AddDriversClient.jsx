@@ -197,21 +197,41 @@ export default function AddDriverClient() {
             toast.error("No driver selected.");
             return;
         }
+        // Validate required fields
+        if (!formData.plateNumber) {
+            toast.error("Plate number is required.");
+            return;
+        }
+        if (!formData.company) {
+            toast.error("Company is required.");
+            return;
+        }
+        if (!formData.hauler) {
+            toast.error("Hauler is required.");
+            return;
+        }
+        if (!formData.arrivalTime) {
+            toast.error("Arrival time is required.");
+            return;
+        }
+
         const selectedCompany = companies.find(c => c.name === formData.company);
-        const selectedTruck = trucks.find(t => t.type === formData.truckType);
+        const selectedTruck = formData.truckType ? trucks.find(t => t.type === formData.truckType) : null;
+        
         const payload = {
             driverDataId: selectedDriver._id,
             name: selectedDriver.name,
-            plateNumber: formData.plateNumber || null,
-            company: formData.company || '',
-            companyId: selectedCompany?._id || null,
-            truckTypeId: selectedTruck?._id || null,
-            haulerId: formData.haulerId || null,
-            products: formData.products,
+            plateNumber: formData.plateNumber,
+            company: formData.company,
+            companyId: selectedCompany?._id,
+            truckTypeId: selectedTruck?._id, // Will be undefined if no truck type selected
+            truckType: formData.truckType || '', // Send empty string if no truck type
+            haulerId: formData.haulerId,
+            products: formData.products || [],
             dnNumber: formData.dnNumber || '',
             arrivalTime: formData.arrivalTime,
-            departureTime: formData.departureTime,
-            destination: formData.destination
+            departureTime: formData.departureTime || null,
+            destination: formData.destination || ''
         };
         try {
             let res;
